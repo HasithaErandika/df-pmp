@@ -1,5 +1,5 @@
 import { toISODate, today, zonedParts } from '../../lib/dates'
-import type { Meeting } from '../../types'
+import type { Meeting, OutlookEvent } from '../../types'
 
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -9,10 +9,18 @@ type Props = {
   timeZone: string
   onSelectMeeting: (meeting: Meeting) => void
   onSelectDay?: (date: string) => void
+  outlookEvents?: OutlookEvent[]
 }
 
 /** Month grid. Days are buttons (to schedule) and events are buttons (to open), both keyboard reachable. */
-export function CalendarGrid({ month, meetings, timeZone, onSelectMeeting, onSelectDay }: Props) {
+export function CalendarGrid({
+  month,
+  meetings,
+  timeZone,
+  onSelectMeeting,
+  onSelectDay,
+  outlookEvents = [],
+}: Props) {
   const year = month.getFullYear()
   const monthIndex = month.getMonth()
   const leading = new Date(year, monthIndex, 1).getDay()
@@ -25,6 +33,11 @@ export function CalendarGrid({ month, meetings, timeZone, onSelectMeeting, onSel
   meetings.forEach((meeting) => {
     const day = zonedParts(meeting.startsAt, timeZone).date
     byDay.set(day, [...(byDay.get(day) ?? []), meeting])
+  })
+  const outlookByDay = new Map<string, OutlookEvent[]>()
+  outlookEvents.forEach((event) => {
+    const day = zonedParts(event.startsAt, timeZone).date
+    outlookByDay.set(day, [...(outlookByDay.get(day) ?? []), event])
   })
   const current = today()
 
@@ -64,6 +77,19 @@ export function CalendarGrid({ month, meetings, timeZone, onSelectMeeting, onSel
                     </span>
                     {meeting.title}
                   </button>
+                ))}
+                {(outlookByDay.get(date) ?? []).map((event) => (
+                  <a
+                    key={event.id}
+                    href={event.webLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="calendar-event event-outlook"
+                    title={`Outlook: ${event.subject} · ${zonedParts(event.startsAt, timeZone).time}`}
+                  >
+                    <span className="event-time">{zonedParts(event.startsAt, timeZone).time}</span>
+                    {event.subject || '(No title)'}
+                  </a>
                 ))}
               </div>
             </div>

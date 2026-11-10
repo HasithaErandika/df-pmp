@@ -1,0 +1,162 @@
+/* People search combobox, person field and participant chips. */
+.person-search {
+  position: relative;
+}
+.person-search-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-3);
+}
+.person-search-input:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.person-search-input input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 13.5px;
+}
+.field .person-search-input input:not([type='checkbox']) {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+.person-options {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  list-style: none;
+}
+.person-options li[role='option'] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.person-options li.active {
+  background: var(--accent-soft);
+}
+.person-option-text {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.person-option-text b {
+  font-size: 13px;
+  font-weight: 500;
+}
+.person-option-text small {
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.org-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--tone-turquoise-bg);
+  color: var(--tone-turquoise-fg);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.person-empty,
+.person-hint {
+  padding: 8px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.person-hint {
+  border-top: 1px solid var(--line-soft);
+  font-size: 11px;
+}
+.person-chip-field {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 13.5px;
+}
+.person-chip-field .truncate {
+  flex: 1;
+}
+.person-chip-field .link-button {
+  color: var(--accent);
+  font-size: 12.5px;
+}
+.participant-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.participant-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 4px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-2);
+  font-size: 12.5px;
+}
+.participant-chips li.muted {
+  border: 0;
+  background: none;
+}
+.participant-chips button {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-3);
+}
+.participant-chips button:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

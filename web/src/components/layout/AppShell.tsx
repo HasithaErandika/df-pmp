@@ -1,6 +1,7 @@
 import { Suspense, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useConfig } from '../../context/ConfigContext'
+import { useSession } from '../../context/SessionContext'
 import { useStoredState } from '../../hooks/useStoredState'
 import { ProjectFormDialog } from '../../features/projects/ProjectFormDialog'
 import { Skeleton } from '../ui/States'
@@ -10,6 +11,7 @@ import { Topbar } from './Topbar'
 /** Authenticated layout: navigation, header, routed page content and footer. */
 export function AppShell() {
   const config = useConfig()
+  const { status } = useSession()
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -53,7 +55,7 @@ export function AppShell() {
           </span>
           <span className="preview-status">
             <b aria-hidden="true" />
-            Preview environment
+            {status?.mode === 'entra' ? 'Microsoft 365 sign-in' : 'Preview environment'}
           </span>
         </footer>
       </div>

@@ -1,47 +1,57 @@
 import { useState } from 'react'
-import { matches } from '../../components/ui/Filters'
+import { X } from 'lucide-react'
+import { PersonSearch } from '../../components/people/PersonSearch'
 import { Avatar } from '../../components/ui/Badges'
 import { useUsers } from '../../hooks/useReferenceData'
 
-type Props = { value: number[]; onChange: (ids: number[]) => void; error?: string }
+type Props = {
+  value: number[]
+  onChange: (ids: number[]) => void
+  error?: string
+  disabled?: boolean
+}
 
-/** Searchable checklist for choosing meeting participants. */
-export function ParticipantPicker({ value, onChange, error }: Props) {
+/** Participant chips plus organization search. Scales to large directories (no full user list). */
+export function ParticipantPicker({ value, onChange, error, disabled }: Props) {
   const users = useUsers()
-  const [filter, setFilter] = useState('')
-  const selected = new Set(value)
-  const toggle = (id: number) =>
-    onChange(selected.has(id) ? value.filter((v) => v !== id) : [...value, id])
-  const visible = (users.data ?? []).filter((user) => matches(filter, user.displayName, user.email))
+  const [names, setNames] = useState<Record<number, string>>({})
+  const nameOf = (id: number) =>
+    users.data?.find((u) => u.id === id)?.displayName ?? names[id] ?? `User ${id}`
 
   return (
     <fieldset className={`field span-2 participant-picker ${error ? 'field-invalid' : ''}`}>
       <legend>
         Participants <span className="count-pill">{value.length}</span>
       </legend>
-      <input
-        type="search"
-        placeholder="Find people"
-        aria-label="Find participants"
-        value={filter}
-        onChange={(event) => setFilter(event.target.value)}
-      />
-      <div className="participant-list">
-        {visible.map((user) => (
-          <label key={user.id} className={selected.has(user.id) ? 'checked' : ''}>
-            <input
-              type="checkbox"
-              checked={selected.has(user.id)}
-              onChange={() => toggle(user.id)}
-            />
-            <Avatar name={user.displayName} size="sm" />
-            <span>{user.displayName}</span>
-          </label>
+      {!disabled && (
+        <PersonSearch
+          label="Add participants"
+          placeholder="Add people by name or email"
+          excludeIds={value}
+          onSelect={(user) => {
+            setNames((current) => ({ ...current, [user.id]: user.displayName }))
+            onChange([...value, user.id])
+          }}
+        />
+      )}
+      <ul className="participant-chips">
+        {value.map((id) => (
+          <li key={id}>
+            <Avatar name={nameOf(id)} size="sm" />
+            <span>{nameOf(id)}</span>
+            {!disabled && (
+              <button
+                type="button"
+                aria-label={`Remove ${nameOf(id)}`}
+                onClick={() => onChange(value.filter((v) => v !== id))}
+              >
+                <X size={13} />
+              </button>
+            )}
+          </li>
         ))}
-        {users.data && visible.length === 0 && (
-          <span className="muted">No people match “{filter}”.</span>
-        )}
-      </div>
+        {value.length === 0 && <li className="muted">No participants yet.</li>}
+      </ul>
       {error && <span className="field-error">{error}</span>}
     </fieldset>
   )

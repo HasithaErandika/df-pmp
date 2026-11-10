@@ -4,21 +4,25 @@
 INSERT INTO roles (key, name, description) VALUES
   ('administrator', 'Administrator', 'Full access for platform administration'),
   ('project_manager', 'Project manager', 'Manage projects, work and meetings'),
-  ('team_member', 'Team member', 'View delivery data and update assigned work');
+  ('team_member', 'Team member', 'View delivery data and update assigned work')
+ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO role_permissions (role_id, permission_key)
-SELECT r.id, p.key FROM roles r CROSS JOIN permissions p WHERE r.key = 'administrator';
+SELECT r.id, p.key FROM roles r CROSS JOIN permissions p WHERE r.key = 'administrator'
+ON CONFLICT DO NOTHING;
 
 INSERT INTO role_permissions (role_id, permission_key)
 SELECT r.id, p.key FROM roles r JOIN permissions p ON p.key IN (
   'project:view', 'project:create', 'project:update', 'work:view', 'work:create', 'work:update',
   'work:delete', 'meeting:view', 'meeting:create', 'meeting:update', 'meeting:delete'
-) WHERE r.key = 'project_manager';
+) WHERE r.key = 'project_manager'
+ON CONFLICT DO NOTHING;
 
 INSERT INTO role_permissions (role_id, permission_key)
 SELECT r.id, p.key FROM roles r JOIN permissions p ON p.key IN (
   'project:view', 'work:view', 'work:update', 'meeting:view'
-) WHERE r.key = 'team_member';
+) WHERE r.key = 'team_member'
+ON CONFLICT DO NOTHING;
 
 INSERT INTO users (display_name, email) VALUES
   ('Hasitha Erandika', 'hasitha@example.com'),

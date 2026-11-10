@@ -2,6 +2,7 @@ package meetings
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -22,6 +23,7 @@ type Repository interface {
 type Handler struct {
 	Repo     Repository
 	TimeZone func() (*time.Location, error)
+	Outlook  *Outlook // nil when Microsoft 365 is not configured
 }
 
 // Register mounts routes on mux with their required permissions.
@@ -46,8 +48,29 @@ func (h Handler) Register(mux *http.ServeMux) {
 		h.save(r.PathValue("id"), http.StatusOK)(w, r)
 	}))
 	mux.HandleFunc("DELETE /api/v1/meetings/{id}", auth.Require("meeting:delete", func(w http.ResponseWriter, r *http.Request) {
-		httpx.NoContent(w, r, func() error { return h.Repo.Delete(r.Context(), r.PathValue("id")) })
+		httpx.NoContent(w, r, func() error {
+			if h.Outlook != nil {
+				if err := h.Outlook.Cancel(r.Context(), r.PathValue("id"), auth.FromContext(r.Context())); err != nil {
+					return err
+				}
+			}
+			return h.Repo.Delete(r.Context(), r.PathValue("id"))
+		})
 	}))
+	mux.HandleFunc("POST /api/v1/meetings/{id}/outlook-sync", auth.Require("meeting:update", func(w http.ResponseWriter, r *http.Request) {
+		httpx.Respond(w, r, http.StatusOK, func() (Meeting, error) { return h.sync(r, r.PathValue("id")) })
+	}))
+	h.registerOutlook(mux)
+}
+
+// sync pushes the meeting to Outlook (recording any failure on the meeting) and returns its latest state.
+func (h Handler) sync(r *http.Request, id string) (Meeting, error) {
+	if h.Outlook != nil {
+		if err := h.Outlook.Sync(r.Context(), id, auth.FromContext(r.Context())); err != nil {
+			slog.ErrorContext(r.Context(), "outlook sync failed", "meeting", id, "error", err)
+		}
+	}
+	return h.Repo.Get(r.Context(), id)
 }
 
 func (h Handler) save(id string, status int) http.HandlerFunc {
@@ -57,7 +80,11 @@ func (h Handler) save(id string, status int) http.HandlerFunc {
 			if err != nil {
 				return Meeting{}, err
 			}
-			return h.Repo.Save(r.Context(), id, in)
+			saved, err := h.Repo.Save(r.Context(), id, in)
+			if err != nil {
+				return Meeting{}, err
+			}
+			return h.sync(r, saved.ID)
 		})
 	}
 }

@@ -1,5 +1,14 @@
 import type {
   ActivityEvent,
+  AdminUser,
+  AuthStatus,
+  DocumentFolder,
+  DriveItem,
+  IntegrationReport,
+  OutlookCalendar,
+  PeopleResults,
+  Person,
+  Role,
   AppConfig,
   Meeting,
   MeetingInput,
@@ -13,65 +22,21 @@ import type {
   WorkItemInput,
 } from '../types'
 
-const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+import { request, upload, withQuery } from './http'
 
-/** Error raised for non-2xx responses; carries per-field validation messages when present. */
-export class ApiError extends Error {
-  readonly status: number
-  readonly fields: Record<string, string>
+export { ApiError, apiBase } from './http'
 
-  constructor(status: number, message: string, fields: Record<string, string> = {}) {
-    super(message)
-    this.name = 'ApiError'
-    this.status = status
-    this.fields = fields
-  }
-}
-
-type RequestOptions = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
-  body?: unknown
-  signal?: AbortSignal
-}
-
-async function request<T>(path: string, { method = 'GET', body, signal }: RequestOptions = {}) {
-  let response: Response
-  try {
-    response = await fetch(`${apiBase}${path}`, {
-      method,
-      signal,
-      headers: {
-        Accept: 'application/json',
-        ...(body ? { 'Content-Type': 'application/json' } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    })
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') throw error
-    throw new ApiError(0, 'The server could not be reached. Check your connection and try again.')
-  }
-  if (response.status === 204) return undefined as T
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    throw new ApiError(
-      response.status,
-      payload.error ?? `Request failed (${response.status})`,
-      payload.fields,
-    )
-  }
-  return payload as T
-}
-
-const withQuery = (path: string, params: Record<string, string | undefined>) => {
-  const query = new URLSearchParams(
-    Object.entries(params).filter((entry): entry is [string, string] => Boolean(entry[1])),
-  ).toString()
-  return query ? `${path}?${query}` : path
-}
+const enc = encodeURIComponent
 
 export const api = {
   config: (signal?: AbortSignal) => request<AppConfig>('/api/v1/config', { signal }),
   me: (signal?: AbortSignal) => request<Session>('/api/v1/me', { signal }),
+  authStatus: (signal?: AbortSignal) => request<AuthStatus>('/api/v1/auth/status', { signal }),
+  logout: () => request<void>('/api/v1/auth/logout', { method: 'POST' }),
+  people: (q: string, signal?: AbortSignal) =>
+    request<PeopleResults>(withQuery('/api/v1/directory/people', { q }), { signal }),
+  addPerson: (entraId: string) =>
+    request<Person>('/api/v1/directory/people', { method: 'POST', body: { entraId } }),
   users: (signal?: AbortSignal) => request<User[]>('/api/v1/users', { signal }),
   dashboard: (signal?: AbortSignal) => request<Summary>('/api/v1/dashboard', { signal }),
   activity: (type: string, id: string, signal?: AbortSignal) =>
@@ -108,5 +73,25 @@ export const api = {
       request<Meeting>(`/api/v1/meetings/${encodeURIComponent(id)}`, { method: 'PUT', body }),
     remove: (id: string) =>
       request<void>(`/api/v1/meetings/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    syncOutlook: (id: string) =>
+      request<Meeting>(`/api/v1/meetings/${enc(id)}/outlook-sync`, { method: 'POST' }),
+    outlookEvents: (range: { from: string; to: string }, signal?: AbortSignal) =>
+      request<OutlookCalendar>(withQuery('/api/v1/outlook/events', range), { signal }),
+  },
+
+  documents: {
+    list: (projectId: string, signal?: AbortSignal) =>
+      request<DocumentFolder>(`/api/v1/projects/${enc(projectId)}/documents`, { signal }),
+    upload: (projectId: string, file: File, onProgress?: (percent: number) => void) =>
+      upload<DriveItem>(`/api/v1/projects/${enc(projectId)}/documents`, file, onProgress),
+  },
+
+  admin: {
+    users: (signal?: AbortSignal) => request<AdminUser[]>('/api/v1/admin/users', { signal }),
+    roles: (signal?: AbortSignal) => request<Role[]>('/api/v1/admin/roles', { signal }),
+    integrations: (signal?: AbortSignal) =>
+      request<IntegrationReport>('/api/v1/admin/integrations', { signal }),
+    updateUser: (id: number, body: { roles: string[]; active: boolean }) =>
+      request<void>(`/api/v1/admin/users/${id}`, { method: 'PUT', body }),
   },
 }

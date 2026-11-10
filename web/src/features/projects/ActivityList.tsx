@@ -9,6 +9,7 @@ const actionLabels: Record<string, string> = {
   created: 'created this record',
   updated: 'updated this record',
   deleted: 'deleted this record',
+  uploaded: 'uploaded a document',
 }
 
 /** Audit trail for one record, newest first. */
@@ -17,7 +18,7 @@ export function ActivityList({ type, id }: { type: string; id: string }) {
   return (
     <Panel
       title="Activity"
-      description="Recorded changes to this project."
+      description="Recorded changes, newest first."
       icon={History}
       tone="purple"
     >

@@ -14,6 +14,7 @@ const ProjectsPage = lazy(() => import('./features/projects/ProjectsPage'))
 const ProjectDetailPage = lazy(() => import('./features/projects/ProjectDetailPage'))
 const CalendarPage = lazy(() => import('./features/meetings/CalendarPage'))
 const MeetingsPage = lazy(() => import('./features/meetings/MeetingsPage'))
+const AdminPage = lazy(() => import('./features/admin/AdminPage'))
 
 export default function App() {
   return (
@@ -36,6 +37,14 @@ export default function App() {
                 <Route path="projects/:id" element={<ProjectDetailPage />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="meetings" element={<MeetingsPage />} />
+                <Route
+                  path="admin"
+                  element={
+                    <RequireSession permission="user:manage">
+                      <AdminPage />
+                    </RequireSession>
+                  }
+                />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
             </Routes>

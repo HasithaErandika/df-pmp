@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
+import { PersonField } from '../../components/people/PersonField'
 import { Button } from '../../components/ui/Button'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
 import { SelectField, TextField, toOptions } from '../../components/ui/Field'
@@ -9,7 +10,7 @@ import { useSession } from '../../context/SessionContext'
 import { useToast } from '../../context/ToastContext'
 import { required, useForm } from '../../hooks/useForm'
 import { invalidate } from '../../hooks/useQuery'
-import { useProjects, useUsers } from '../../hooks/useReferenceData'
+import { useProjects } from '../../hooks/useReferenceData'
 import { api } from '../../lib/api'
 import { addDays, today } from '../../lib/dates'
 import type { WorkItem, WorkItemInput } from '../../types'
@@ -36,7 +37,6 @@ function WorkItemForm({ item, projectId, onClose }: Props) {
   const { workflow } = useConfig()
   const { session, can } = useSession()
   const notify = useToast()
-  const users = useUsers()
   const projects = useProjects()
   const [confirming, setConfirming] = useState(false)
   const editable = item ? can('work:update') : can('work:create')
@@ -104,13 +104,13 @@ function WorkItemForm({ item, projectId, onClose }: Props) {
           error={errors.projectId}
           onChange={(e) => set('projectId', e.target.value)}
         />
-        <SelectField
+        <PersonField
           label="Assignee"
-          placeholder="Unassigned"
-          options={(users.data ?? []).map((u) => ({ value: u.id, label: u.displayName }))}
-          value={values.assigneeId ?? ''}
+          clearable
+          disabled={!editable}
+          value={values.assigneeId}
           error={errors.assigneeId}
-          onChange={(e) => set('assigneeId', e.target.value ? Number(e.target.value) : null)}
+          onChange={(id) => set('assigneeId', id)}
         />
         <SelectField
           label="Type"

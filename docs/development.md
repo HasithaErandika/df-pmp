@@ -32,7 +32,11 @@ On start the API applies embedded SQL migrations (`api/internal/database/migrati
 
 ### Sign-in
 
-`AUTH_MODE=preview` makes every API request act as `PREVIEW_USER_EMAIL` with that user's database roles. It is for development only. Any other value rejects requests until the Microsoft Entra ID resolver is implemented (see [ADR 0005](adr/0005-implementation-baseline.md)).
+- `AUTH_MODE=preview` (development only): every request acts as `PREVIEW_USER_EMAIL` with that user's database roles.
+- `AUTH_MODE=entra`: Microsoft Entra ID sign-in with server-side sessions. See [integrations](integrations.md) for tenant setup, permissions and settings.
+- Any other value rejects all requests.
+
+Administrators (role `administrator`) always hold every permission.
 
 ### API overview
 
@@ -45,6 +49,11 @@ On start the API applies embedded SQL migrations (`api/internal/database/migrati
 | `GET/POST /api/v1/work-items` (`?projectId=`, `?assignee=me`), `GET/PUT/DELETE /api/v1/work-items/{id}` | `work:view/create/update/delete` |
 | `GET /api/v1/meeting-types`, `GET/POST /api/v1/meetings` (`?from=&to=`), `GET/PUT/DELETE /api/v1/meetings/{id}` | `meeting:view/create/update/delete` |
 | `GET /api/v1/activity/{type}/{id}` | `audit:view` |
+| `GET /api/v1/auth/status`, `GET /api/v1/auth/login`, `GET /api/v1/auth/callback`, `POST /api/v1/auth/logout` | public (sign-in flow) |
+| `GET /api/v1/directory/people?q=` / `POST /api/v1/directory/people` | `project:view` / `directory:search` |
+| `POST /api/v1/meetings/{id}/outlook-sync`, `GET /api/v1/outlook/events?from=&to=` | `meeting:update` / `meeting:view` |
+| `GET/POST /api/v1/projects/{id}/documents` | `document:view` / `document:upload` |
+| `GET /api/v1/admin/users`, `GET /api/v1/admin/roles`, `PUT /api/v1/admin/users/{id}`, `GET /api/v1/admin/integrations` | `user:manage` |
 
 Validation errors return `422` with `{ "error": "...", "fields": { "name": "..." } }`. Every create, update and delete writes an `audit_events` row in the same transaction.
 

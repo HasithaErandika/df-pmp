@@ -13,12 +13,14 @@ export type MeetingFormValues = {
   location: string
   agenda: string
   participantIds: number[]
+  outlook: boolean
+  teamsMeeting: boolean
 }
 
 export function toFormValues(
   meeting: Meeting | undefined,
   timeZone: string,
-  defaults: { date?: string; userId?: number },
+  defaults: { date?: string; userId?: number; outlook?: boolean },
 ): MeetingFormValues {
   const start = meeting
     ? zonedParts(meeting.startsAt, timeZone)
@@ -34,6 +36,8 @@ export function toFormValues(
     location: meeting?.location ?? '',
     agenda: meeting?.agenda ?? '',
     participantIds: meeting?.participantIds ?? (defaults.userId ? [defaults.userId] : []),
+    outlook: meeting?.outlook ?? Boolean(defaults.outlook),
+    teamsMeeting: meeting?.teamsMeeting ?? false,
   }
 }
 
@@ -47,6 +51,8 @@ export function toMeetingInput(v: MeetingFormValues, timeZone: string): MeetingI
     location: v.location,
     agenda: v.agenda,
     participantIds: v.participantIds,
+    outlook: v.outlook,
+    teamsMeeting: v.outlook && v.teamsMeeting,
   }
 }
 

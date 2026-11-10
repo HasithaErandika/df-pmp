@@ -22,7 +22,7 @@ The platform needed a runnable vertical slice (projects, work items, meetings, d
 
 ## Consequences
 
-Preview mode must never be enabled outside development. Workflow vocabularies are global rather than per-project until journeys are confirmed. Microsoft 365 integrations remain unimplemented.
+Preview mode must never be enabled outside development. Microsoft 365 integration is implemented behind `api/internal/integrations/microsoft` (see integrations.md); administrators implicitly hold every permission. Workflow vocabularies are global rather than per-project until journeys are confirmed.
 
 ## Revisit when
 

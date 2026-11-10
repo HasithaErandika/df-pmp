@@ -19,4 +19,7 @@
 @import './calendar.css';
 @import './agenda.css';
 @import './login.css';
+@import './people.css';
+@import './integrations.css';
+@import './admin.css';
 @import './responsive.css';

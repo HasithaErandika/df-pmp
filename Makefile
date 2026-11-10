@@ -7,6 +7,7 @@ help: ## Show available commands
 
 env-init: ## Create local environment and generate a random database password
 	@test -f api/.env || { cp api/.env.example api/.env; sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=$$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')/" api/.env; }
+	@grep -q '^SESSION_ENCRYPTION_KEY=.' api/.env || sed -i "s#^SESSION_ENCRYPTION_KEY=.*#SESSION_ENCRYPTION_KEY=$$(python3 -c 'import os,base64; print(base64.b64encode(os.urandom(32)).decode())')#" api/.env
 	@test -f web/.env || cp web/.env.example web/.env
 
 install: ## Install web dependencies

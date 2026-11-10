@@ -25,6 +25,7 @@ export type Session = {
   email: string
   roles: string[]
   permissions: string[]
+  microsoft: 'connected' | 'not_connected'
 }
 
 export type User = { id: number; displayName: string; email: string }
@@ -75,8 +76,27 @@ export type Meeting = {
   location: string
   agenda: string
   participantIds: number[]
+  outlook: boolean
+  teamsMeeting: boolean
+  organizerId: number | null
+  outlookWebLink: string
+  onlineMeetingUrl: string
+  syncStatus: 'not_synced' | 'synced' | 'failed'
+  syncError: string
 }
-export type MeetingInput = Omit<Meeting, 'id' | 'typeName' | 'tone' | 'projectName'>
+export type MeetingInput = Pick<
+  Meeting,
+  | 'title'
+  | 'typeId'
+  | 'projectId'
+  | 'startsAt'
+  | 'endsAt'
+  | 'location'
+  | 'agenda'
+  | 'participantIds'
+  | 'outlook'
+  | 'teamsMeeting'
+>
 
 export type Summary = {
   activeProjects: number
@@ -97,3 +117,5 @@ export type ActivityEvent = {
   objectId: string
   summary: string
 }
+
+export * from './integrations'

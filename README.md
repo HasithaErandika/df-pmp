@@ -20,7 +20,7 @@ df-pmp will support configurable project, task, meeting, approval and administra
 | Deployment | Docker and Docker Compose for development; bank-approved production platform |
 | Optional | Redis only when a demonstrated caching or background-job need exists |
 
-Application directories are `web/` and `api/`. Implemented: PostgreSQL persistence with migrations, database-driven roles and permissions, projects, work items, typed meetings (ITSSC, Operations) with participants, a live dashboard, an audit trail, and a responsive web UI. Not yet implemented: Microsoft Entra ID sign-in (a development-only preview sign-in is used), Microsoft Graph/SharePoint/Outlook/Teams integration, and configurable workflow execution. Power BI is not required.
+Application directories are `web/` and `api/`. Implemented: PostgreSQL persistence with migrations, database-driven roles and permissions (administrators hold every permission), projects, work items with a Kanban board, typed meetings (ITSSC, Operations), a live dashboard, an audit trail, and an Administration area. Microsoft 365 is integrated: Entra ID sign-in, organization people search, Outlook invitations with Teams links, and SharePoint project documents. It needs your tenant configuration; see [Microsoft 365 integration](docs/integrations.md). Workflow execution engines are not implemented. Power BI is not required.
 
 ## Getting started
 

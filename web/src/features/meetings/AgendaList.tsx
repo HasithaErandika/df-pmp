@@ -1,4 +1,4 @@
-import { Clock3, MapPin, Users } from 'lucide-react'
+import { AlertTriangle, Clock3, Mail, MapPin, Users, Video } from 'lucide-react'
 import { EmptyState } from '../../components/ui/States'
 import { formatTime } from '../../lib/dates'
 import type { Meeting } from '../../types'
@@ -37,6 +37,21 @@ export function AgendaList({ meetings, timeZone, onSelect, emptyMessage }: Props
               <span className="agenda-title">
                 {meeting.title}
                 <span className={`type-chip tone-${meeting.tone}`}>{meeting.typeName}</span>
+                {meeting.onlineMeetingUrl && (
+                  <span className="type-chip tone-purple" title="Microsoft Teams meeting">
+                    <Video size={11} aria-hidden /> Teams
+                  </span>
+                )}
+                {meeting.syncStatus === 'synced' && (
+                  <span className="sync-dot" title="Invitation sent through Outlook">
+                    <Mail size={12} aria-label="Sent through Outlook" />
+                  </span>
+                )}
+                {meeting.syncStatus === 'failed' && (
+                  <span className="sync-dot failed" title={meeting.syncError}>
+                    <AlertTriangle size={12} aria-label="Outlook sync failed" />
+                  </span>
+                )}
               </span>
               <span>
                 <Clock3 size={13} aria-hidden />

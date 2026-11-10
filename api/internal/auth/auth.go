@@ -11,8 +11,8 @@ import (
 	"slices"
 
 	"github.com/dialog-finance/df-pmp/api/internal/httpx"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/oauth2"
 )
 
 // Principal is the authenticated application user with effective permissions.
@@ -22,6 +22,18 @@ type Principal struct {
 	Email       string   `json:"email"`
 	Roles       []string `json:"roles"`
 	Permissions []string `json:"permissions"`
+	// Microsoft is "connected" when the session holds a delegated Microsoft token.
+	Microsoft string `json:"microsoft"`
+
+	token oauth2.TokenSource
+}
+
+// MicrosoftToken returns the signed-in user's delegated Microsoft Graph token source, or nil.
+func (p *Principal) MicrosoftToken() oauth2.TokenSource {
+	if p == nil {
+		return nil
+	}
+	return p.token
 }
 
 // Can reports whether the principal holds a permission.
@@ -86,7 +98,7 @@ type PreviewResolver struct {
 
 // Resolve loads the preview user and their current grants on every request so changes apply immediately.
 func (p PreviewResolver) Resolve(r *http.Request) (*Principal, error) {
-	return LoadPrincipal(r.Context(), p.Pool, p.Email)
+	return LoadPrincipal(r.Context(), p.Pool, "lower(u.email) = lower($1)", p.Email)
 }
 
 // DisabledResolver rejects every request; used until Entra ID is configured.
@@ -94,26 +106,3 @@ type DisabledResolver struct{}
 
 // Resolve always returns ErrUnauthenticated.
 func (DisabledResolver) Resolve(*http.Request) (*Principal, error) { return nil, ErrUnauthenticated }
-
-// LoadPrincipal reads an active user with their roles and effective permissions.
-func LoadPrincipal(ctx context.Context, pool *pgxpool.Pool, email string) (*Principal, error) {
-	const query = `
-		SELECT u.id, u.display_name, u.email,
-		       COALESCE(array_agg(DISTINCT r.key) FILTER (WHERE r.key IS NOT NULL), '{}'),
-		       COALESCE(array_agg(DISTINCT rp.permission_key) FILTER (WHERE rp.permission_key IS NOT NULL), '{}')
-		FROM users u
-		LEFT JOIN user_roles ur ON ur.user_id = u.id
-		LEFT JOIN roles r ON r.id = ur.role_id
-		LEFT JOIN role_permissions rp ON rp.role_id = r.id
-		WHERE lower(u.email) = lower($1) AND u.active
-		GROUP BY u.id`
-	var p Principal
-	err := pool.QueryRow(ctx, query, email).Scan(&p.ID, &p.DisplayName, &p.Email, &p.Roles, &p.Permissions)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, ErrUnauthenticated
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &p, nil
-}

@@ -23,6 +23,14 @@ type Meeting struct {
 	Location       string    `json:"location"`
 	Agenda         string    `json:"agenda"`
 	ParticipantIDs []int64   `json:"participantIds"`
+	// Outlook synchronization. df-pmp is the source of truth; Outlook is updated after each save.
+	Outlook          bool   `json:"outlook"`
+	TeamsMeeting     bool   `json:"teamsMeeting"`
+	OrganizerID      *int64 `json:"organizerId"`
+	OutlookWebLink   string `json:"outlookWebLink"`
+	OnlineMeetingURL string `json:"onlineMeetingUrl"`
+	SyncStatus       string `json:"syncStatus"`
+	SyncError        string `json:"syncError"`
 }
 
 // Type is a configurable meeting category.
@@ -42,6 +50,8 @@ type Input struct {
 	Location       string  `json:"location"`
 	Agenda         string  `json:"agenda"`
 	ParticipantIDs []int64 `json:"participantIds"`
+	Outlook        bool    `json:"outlook"`
+	TeamsMeeting   bool    `json:"teamsMeeting"`
 }
 
 // Range limits listed meetings to calendar dates (inclusive) in the configured time zone.
@@ -73,5 +83,8 @@ func (in Input) Validate() (validated, error) {
 	ids := slices.Clone(in.ParticipantIDs)
 	slices.Sort(ids)
 	out.ParticipantIDs = slices.Compact(ids)
+	if !in.Outlook {
+		out.TeamsMeeting = false // a Teams link is delivered through the Outlook invitation
+	}
 	return out, v.Err()
 }

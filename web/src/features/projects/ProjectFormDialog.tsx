@@ -1,3 +1,4 @@
+import { PersonField } from '../../components/people/PersonField'
 import { Button } from '../../components/ui/Button'
 import { SelectField, TextAreaField, TextField, toOptions } from '../../components/ui/Field'
 import { Modal } from '../../components/ui/Modal'
@@ -5,7 +6,6 @@ import { useConfig } from '../../context/ConfigContext'
 import { useToast } from '../../context/ToastContext'
 import { required, useForm } from '../../hooks/useForm'
 import { invalidate } from '../../hooks/useQuery'
-import { useUsers } from '../../hooks/useReferenceData'
 import { api } from '../../lib/api'
 import { addDays, today } from '../../lib/dates'
 import type { Project, ProjectInput } from '../../types'
@@ -35,7 +35,6 @@ export function ProjectFormDialog(props: Props) {
 
 function ProjectForm({ project, onClose, onSaved }: Props) {
   const { workflow } = useConfig()
-  const users = useUsers()
   const notify = useToast()
   const start = today()
   const { values, errors, set, submitting, handleSubmit } = useForm<ProjectInput>({
@@ -76,10 +75,6 @@ function ProjectForm({ project, onClose, onSaved }: Props) {
       onClose()
     },
   })
-  const userOptions = (users.data ?? []).map((user) => ({
-    value: user.id,
-    label: user.displayName,
-  }))
 
   return (
     <form className="form-grid" onSubmit={handleSubmit} noValidate>
@@ -101,14 +96,12 @@ function ProjectForm({ project, onClose, onSaved }: Props) {
         onChange={(event) => set('description', event.target.value)}
         className="span-2"
       />
-      <SelectField
+      <PersonField
         label="Owner"
         required
-        placeholder={users.loading ? 'Loading people…' : 'Choose an owner'}
-        options={userOptions}
-        value={values.ownerId || ''}
+        value={values.ownerId || null}
         error={errors.ownerId}
-        onChange={(event) => set('ownerId', Number(event.target.value))}
+        onChange={(id) => set('ownerId', id ?? 0)}
       />
       <SelectField
         label="Status"

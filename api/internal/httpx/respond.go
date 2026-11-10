@@ -2,6 +2,7 @@
 package httpx
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -68,6 +69,8 @@ func Fail(w http.ResponseWriter, r *http.Request, err error) {
 		JSON(w, http.StatusUnprocessableEntity, map[string]any{"error": "Please correct the highlighted fields.", "fields": validation.Fields})
 	case errors.Is(err, ErrNotFound):
 		Error(w, http.StatusNotFound, "The requested record was not found.")
+	case errors.Is(err, context.Canceled):
+		// The client went away (navigation or abort); nothing to report.
 	default:
 		slog.ErrorContext(r.Context(), "request failed", "error", err, "path", r.URL.Path, "request_id", RequestID(r.Context()))
 		Error(w, http.StatusInternalServerError, "Something went wrong. Please try again.")

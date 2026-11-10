@@ -22,7 +22,9 @@ var fkFields = database.ForeignKeyFields{
 const selectMeeting = `
 	SELECT m.id, m.title, m.type_id, t.name, t.tone, m.project_id, COALESCE(p.name, ''),
 	       m.starts_at, m.ends_at, m.location, m.agenda,
-	       COALESCE((SELECT array_agg(mp.user_id ORDER BY mp.user_id) FROM meeting_participants mp WHERE mp.meeting_id = m.id), '{}')
+	       COALESCE((SELECT array_agg(mp.user_id ORDER BY mp.user_id) FROM meeting_participants mp WHERE mp.meeting_id = m.id), '{}'),
+	       m.outlook_enabled, m.teams_meeting, m.outlook_organizer, m.outlook_web_link, m.online_meeting_url,
+	       m.sync_status, m.sync_error
 	FROM meetings m
 	JOIN meeting_types t ON t.id = m.type_id
 	LEFT JOIN projects p ON p.id = m.project_id`
@@ -30,7 +32,8 @@ const selectMeeting = `
 func scanMeeting(row pgx.CollectableRow) (Meeting, error) {
 	var m Meeting
 	err := row.Scan(&m.ID, &m.Title, &m.TypeID, &m.TypeName, &m.Tone, &m.ProjectID, &m.ProjectName,
-		&m.StartsAt, &m.EndsAt, &m.Location, &m.Agenda, &m.ParticipantIDs)
+		&m.StartsAt, &m.EndsAt, &m.Location, &m.Agenda, &m.ParticipantIDs,
+		&m.Outlook, &m.TeamsMeeting, &m.OrganizerID, &m.OutlookWebLink, &m.OnlineMeetingURL, &m.SyncStatus, &m.SyncError)
 	return m, err
 }
 
@@ -76,16 +79,17 @@ func (s Store) Save(ctx context.Context, id string, in validated) (Meeting, erro
 		action := "meeting.updated"
 		if id == "" {
 			action = "meeting.created"
-			err := tx.QueryRow(ctx, `INSERT INTO meetings (title, type_id, project_id, starts_at, ends_at, location, agenda)
-				VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
-				in.Title, in.TypeID, in.ProjectID, in.starts, in.ends, in.Location, in.Agenda).Scan(&id)
+			err := tx.QueryRow(ctx, `INSERT INTO meetings (title, type_id, project_id, starts_at, ends_at, location, agenda, outlook_enabled, teams_meeting)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+				in.Title, in.TypeID, in.ProjectID, in.starts, in.ends, in.Location, in.Agenda, in.Outlook, in.TeamsMeeting).Scan(&id)
 			if err != nil {
 				return err
 			}
 		} else {
 			tag, err := tx.Exec(ctx, `UPDATE meetings SET title = $2, type_id = $3, project_id = $4, starts_at = $5,
-				ends_at = $6, location = $7, agenda = $8 WHERE id = $1`,
-				id, in.Title, in.TypeID, in.ProjectID, in.starts, in.ends, in.Location, in.Agenda)
+				ends_at = $6, location = $7, agenda = $8, outlook_enabled = $9,
+				teams_meeting = teams_meeting OR $10 WHERE id = $1`,
+				id, in.Title, in.TypeID, in.ProjectID, in.starts, in.ends, in.Location, in.Agenda, in.Outlook, in.TeamsMeeting)
 			if err != nil {
 				return err
 			}

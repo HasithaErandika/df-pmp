@@ -16,6 +16,7 @@ import type { Project, WorkItem } from '../../types'
 import { WorkItemFormDialog } from '../work/WorkItemFormDialog'
 import { WorkTable } from '../work/WorkTable'
 import { ActivityList } from './ActivityList'
+import { DocumentsPanel } from './DocumentsPanel'
 import { ProjectFormDialog } from './ProjectFormDialog'
 
 export default function ProjectDetailPage() {
@@ -145,7 +146,10 @@ function ProjectDetail({ project }: { project: Project }) {
             )}
           </QueryView>
         </Panel>
-        {can('audit:view') && <ActivityList type="project" id={project.id} />}
+        <div className="detail-side">
+          {can('document:view') && <DocumentsPanel projectId={project.id} />}
+          {can('audit:view') && <ActivityList type="project" id={project.id} />}
+        </div>
       </div>
       <ProjectFormDialog
         open={dialog === 'edit'}

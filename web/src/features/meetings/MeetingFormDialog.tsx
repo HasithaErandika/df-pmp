@@ -13,6 +13,7 @@ import { useMeetingTypes, useProjects } from '../../hooks/useReferenceData'
 import { api } from '../../lib/api'
 import type { Meeting } from '../../types'
 import { toFormValues, toMeetingInput, validateMeeting } from './meetingForm'
+import { OutlookOptions } from './OutlookOptions'
 import { ParticipantPicker } from './ParticipantPicker'
 
 type Props = { open: boolean; meeting?: Meeting; date?: string; onClose: () => void }
@@ -31,20 +32,28 @@ export function MeetingFormDialog(props: Props) {
 
 function MeetingForm({ meeting, date, onClose }: Props) {
   const { timezone } = useConfig()
-  const { session, can } = useSession()
+  const { session, can, hasMicrosoft } = useSession()
   const notify = useToast()
   const types = useMeetingTypes()
   const projects = useProjects()
   const [confirming, setConfirming] = useState(false)
   const editable = meeting ? can('meeting:update') : can('meeting:create')
   const { values, errors, set, submitting, handleSubmit } = useForm({
-    initial: toFormValues(meeting, timezone, { date, userId: session?.id }),
+    initial: toFormValues(meeting, timezone, {
+      date,
+      userId: session?.id,
+      outlook: hasMicrosoft('outlook'),
+    }),
     validate: validateMeeting,
     onSubmit: async (v) => {
       const body = toMeetingInput(v, timezone)
-      await (meeting ? api.meetings.update(meeting.id, body) : api.meetings.create(body))
+      const saved = await (meeting
+        ? api.meetings.update(meeting.id, body)
+        : api.meetings.create(body))
       refresh()
-      notify(meeting ? 'Meeting updated.' : 'Meeting scheduled.')
+      if (saved.syncStatus === 'failed')
+        notify(`Saved, but Outlook was not updated: ${saved.syncError}`, 'error')
+      else notify(meeting ? 'Meeting updated.' : 'Meeting scheduled.')
       onClose()
     },
   })
@@ -136,6 +145,15 @@ function MeetingForm({ meeting, date, onClose }: Props) {
           value={values.participantIds}
           onChange={(ids) => set('participantIds', ids)}
           error={errors.participantIds}
+          disabled={!editable}
+        />
+        <OutlookOptions
+          meeting={meeting}
+          outlook={values.outlook}
+          teams={values.teamsMeeting}
+          onOutlook={(value) => set('outlook', value)}
+          onTeams={(value) => set('teamsMeeting', value)}
+          disabled={!editable}
         />
       </fieldset>
       <p className="field-hint span-2">Times are in {timezone}.</p>

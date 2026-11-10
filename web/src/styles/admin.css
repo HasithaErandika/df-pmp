@@ -1,0 +1,125 @@
+/* Administration: users, roles and integration status. */
+.role-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue-fg);
+  font-size: 12px;
+}
+.role-chip.admin {
+  background: var(--tone-red-bg);
+  color: var(--tone-red-fg);
+  font-weight: 500;
+}
+.row-inactive td {
+  opacity: 0.6;
+}
+.role-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+.role-options legend {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.roles-grid .panel {
+  margin: 0;
+}
+.permission-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0 16px 16px;
+  list-style: none;
+  font-size: 12.5px;
+}
+.permission-list li {
+  display: flex;
+  gap: 6px;
+}
+.permission-list b {
+  font-weight: 500;
+}
+.integrations {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.integration-list {
+  margin: 0;
+  padding: 0 16px 12px;
+  list-style: none;
+}
+.integration-list li {
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line-soft);
+}
+.integration-list li > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+.integration-list small {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.integration-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.integration-state.on {
+  color: var(--tone-green-fg);
+}
+.integration-state.off {
+  color: var(--ink-3);
+}
+.config-list {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 12px;
+  margin: 0;
+  padding: 0 16px 16px;
+  font-size: 13px;
+}
+.config-list dt {
+  color: var(--ink-3);
+}
+.config-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 960px) {
+  .integrations,
+  .outlook-options {
+    grid-template-columns: 1fr;
+  }
+}

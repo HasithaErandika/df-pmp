@@ -17,6 +17,7 @@ type Config struct {
 	AuthMode         string
 	PreviewUserEmail string
 	SeedDemoData     bool
+	Microsoft        Microsoft
 }
 
 // AuthModePreview resolves every request to a configured demo user. It must not be used in production.
@@ -38,6 +39,16 @@ func Load() (Config, error) {
 	}
 	if cfg.DatabaseURL == "" {
 		return cfg, fmt.Errorf("DATABASE_URL or POSTGRES_PASSWORD must be set")
+	}
+	ms, err := loadMicrosoft(cfg.WebOrigin)
+	if err != nil {
+		return cfg, err
+	}
+	cfg.Microsoft = ms
+	if cfg.AuthMode == AuthModeEntra {
+		if err := ms.validateEntra(); err != nil {
+			return cfg, err
+		}
 	}
 	return cfg, nil
 }

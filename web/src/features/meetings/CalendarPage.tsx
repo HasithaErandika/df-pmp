@@ -8,6 +8,7 @@ import { QueryView, Skeleton } from '../../components/ui/States'
 import { useConfig } from '../../context/ConfigContext'
 import { useSession } from '../../context/SessionContext'
 import { useQuery } from '../../hooks/useQuery'
+import { useStoredState } from '../../hooks/useStoredState'
 import { useMeetingTypes } from '../../hooks/useReferenceData'
 import { api } from '../../lib/api'
 import { toISODate } from '../../lib/dates'
@@ -20,7 +21,9 @@ type Editing = { meeting?: Meeting; date?: string } | null
 
 export default function CalendarPage() {
   const { timezone } = useConfig()
-  const { can } = useSession()
+  const { can, hasMicrosoft } = useSession()
+  const outlookAvailable = hasMicrosoft('outlook')
+  const [showOutlook, setShowOutlook] = useStoredState('df-pmp-show-outlook', true)
   const types = useMeetingTypes()
   const [params] = useSearchParams()
   const search = params.get('q') ?? ''
@@ -33,6 +36,13 @@ export default function CalendarPage() {
   const to = toISODate(new Date(month.getFullYear(), month.getMonth() + 1, 0))
   const meetings = useQuery(`meetings:${from}:${to}`, (signal) =>
     api.meetings.list({ from, to }, signal),
+  )
+  const outlook = useQuery(
+    outlookAvailable && showOutlook ? `outlook:${from}:${to}` : 'outlook:off',
+    (signal) =>
+      outlookAvailable && showOutlook
+        ? api.meetings.outlookEvents({ from, to }, signal)
+        : Promise.resolve({ connected: false, events: [] }),
   )
   const shift = (delta: number) =>
     setMonth(new Date(month.getFullYear(), month.getMonth() + delta, 1))
@@ -79,19 +89,36 @@ export default function CalendarPage() {
                 Today
               </Button>
             </div>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              aria-label="Filter by meeting type"
-            >
-              <option value="">All types</option>
-              {(types.data ?? []).map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
+            <div className="calendar-filters">
+              {outlookAvailable && (
+                <label className="outlook-toggle">
+                  <input
+                    type="checkbox"
+                    checked={showOutlook}
+                    onChange={(e) => setShowOutlook(e.target.checked)}
+                  />
+                  My Outlook calendar
+                </label>
+              )}
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                aria-label="Filter by meeting type"
+              >
+                <option value="">All types</option>
+                {(types.data ?? []).map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          {outlook.error && (
+            <p className="outlook-note">
+              Outlook events could not be loaded: {outlook.error.message}
+            </p>
+          )}
           <QueryView query={meetings} skeleton={<Skeleton rows={5} height={80} />}>
             {(list) => (
               <CalendarGrid
@@ -100,6 +127,7 @@ export default function CalendarPage() {
                 timeZone={timezone}
                 onSelectMeeting={(meeting) => setEditing({ meeting })}
                 onSelectDay={canSchedule ? (date) => setEditing({ date }) : undefined}
+                outlookEvents={showOutlook ? outlook.data?.events : undefined}
               />
             )}
           </QueryView>

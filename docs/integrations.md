@@ -1,37 +1,59 @@
 # Microsoft 365 integrations
 
-**Status:** Not implemented. Every integration below needs the company Entra tenant, an app registration, approved Graph permissions and (for SharePoint) a provisioned site. Reporting is in-application; Power BI is out of scope (ADR 0005).
+**Status:** Implemented. Needs the company tenant configuration below. Tested end to end against a simulated Microsoft identity platform and Graph API; the first run against the real tenant should be done with an administrator present. Reporting is in-application; Power BI is out of scope (ADR 0005).
 
-Implementation slot: sign-in plugs into the API's `auth.Resolver` interface (`api/internal/auth`), which currently uses a development-only preview resolver. Microsoft calls should live in a new `api/internal/integrations/microsoft` package.
+## What df-pmp does with Microsoft 365
 
-## Integration boundary
-
-All Microsoft 365 communication should be centralized behind an `integrations/microsoft` area within the Go API. Domain modules should call narrow internal interfaces rather than construct Graph requests directly. Centralization supports consistent credentials, telemetry, retry limits, throttling handling, permission review and provider testing.
-
-## Services and candidate uses
-
-| Service | Candidate use | Design note |
+| Feature | How it works | Permission (Microsoft Graph) |
 | --- | --- | --- |
-| Entra ID | Company sign-in and identity claims | Validate issuer, tenant, audience, signature and token lifetime according to selected flow. |
-| Microsoft Graph | Primary Microsoft 365 API | Use least privilege and only approved scopes. |
-| SharePoint | Project/meeting document libraries and files | Store stable site, drive and item identifiers; avoid copying document bodies into app DB. Evaluate selected-site permissions. |
-| OneDrive | User or shared-file references where approved | Clarify ownership, delegated access and lifecycle behavior. |
-| Outlook Calendar | Create/update meeting events and attendees | Define source of truth, conflict handling, cancellations and synchronization. |
-| Teams | Online meeting links/collaboration | Tenant policy and Graph permission support must be verified for the chosen operation. |
+| **Sign-in** | The API runs the OAuth 2.0 authorization-code flow with PKCE and nonce (backend-for-frontend). The browser only receives an HTTP-only, SameSite=Lax session cookie. Tokens are AES-256-GCM encrypted in PostgreSQL. Users are matched by Entra object ID (`oid`) within the configured tenant (`tid`). | `openid`, `profile`, `email`, `offline_access`, `User.Read` (delegated) |
+| **Organization people search** | Owner, assignee and participant fields search df-pmp users and the Entra directory. Choosing an organization person re-reads their profile from Graph and adds them to df-pmp with the default role. | `User.ReadBasic.All` (delegated) |
+| **Outlook calendar** | Meetings with *Send Outlook invitation* are created in the organizer's calendar. Outlook sends invitations; edits send updates; cancelling sends cancellations. Times are sent in UTC; creation is idempotent (`transactionId`). Only the organizer can change or cancel a synced meeting. Failures are stored on the meeting with a **Retry** button. The calendar can overlay the user's own Outlook events (read-only). Events that are df-pmp meetings are hidden by `iCalUId`. | `Calendars.ReadWrite` (delegated) |
+| **Teams meetings** | *Add Microsoft Teams meeting* creates the Outlook event as an online meeting (`teamsForBusiness`); the join link is shown in df-pmp. | Covered by `Calendars.ReadWrite` |
+| **SharePoint documents** | Each project gets a folder `<project id> <name>` in one document library. Files upload in 5 MB resumable chunks (up to 250 MB) and are listed on the project page. df-pmp stores only folder IDs and links. | `Sites.Selected` (**application**) + a grant on the one site |
 
-Graph should be the primary interface. Use a service-specific API only when an approved requirement is not adequately supported by Graph.
+All Graph calls live in `api/internal/integrations/microsoft`. Without configuration the app keeps working: those features are hidden or show how to enable them (Administration → Microsoft 365).
 
-## Credential models
+## Tenant setup (Entra / Microsoft 365 administrator)
 
-- **Delegated access:** an operation runs with the signed-in user's authority and consent/policy. Appropriate for user-owned actions where user context is needed.
-- **Application access:** a service performs approved background operations without a signed-in user. Requires explicit administrator approval, least privilege, credential protection and operational ownership.
+1. **Register the app.** Entra admin center → App registrations → New registration. Name it `df-pmp` and make it single tenant. Set the redirect URI to platform *Web*: `https://<api-host>/api/v1/auth/callback` (local: `http://localhost:8080/api/v1/auth/callback`).
+2. **Credential.** Create a client secret for development. Production should use a certificate or a managed secret store, per bank policy.
+3. **API permissions → Microsoft Graph.** Add delegated `openid profile email offline_access User.Read User.ReadBasic.All Calendars.ReadWrite` and application `Sites.Selected`, then click **Grant admin consent**.
+4. **SharePoint site.** Create the site (e.g. `https://<tenant>.sharepoint.com/sites/df-pmp`), optionally with a dedicated library.
+5. **Grant the app access to that one site.** Someone with `Sites.FullControl.All` calls:
+   ```http
+   POST https://graph.microsoft.com/v1.0/sites/{site-id}/permissions
+   { "roles": ["write"], "grantedToIdentities": [{ "application": { "id": "<client-id>", "displayName": "df-pmp" } }] }
+   ```
+   Get `{site-id}` with `GET /sites/<tenant>.sharepoint.com:/sites/df-pmp?$select=id`.
+6. **Conditional Access / MFA.** The policies apply automatically at sign-in.
 
-Keep these paths and permissions distinct. Do not request broad tenant access by default. For SharePoint background access, evaluate resource-specific approaches such as selected-site permissions with the tenant administrators.
+## df-pmp configuration (`api/.env`)
 
-## Reliability and data mapping
+```
+AUTH_MODE=entra
+ENTRA_TENANT_ID=<directory (tenant) id>
+ENTRA_CLIENT_ID=<application (client) id>
+ENTRA_CLIENT_SECRET=<secret value>
+ENTRA_REDIRECT_URL=http://localhost:8080/api/v1/auth/callback
+BOOTSTRAP_ADMIN_UPNS=you@company.com        # becomes administrator on first sign-in
+DEFAULT_ROLE=team_member
+SESSION_ENCRYPTION_KEY=<generated by make env-init>
+SHAREPOINT_SITE_URL=https://<tenant>.sharepoint.com/sites/df-pmp
+SHAREPOINT_LIBRARY=                         # empty = default library
+SEED_DEMO_DATA=false                        # avoid sending invitations to sample addresses
+```
 
-For external resources, retain provider and tenant context, stable resource IDs, a resource type, owning df-pmp record, last synchronization state/time and error metadata as appropriate. Treat display names and URLs as mutable attributes. Define idempotency, retry/backoff, throttling, reconciliation and duplicate-event behavior. Webhooks and delta queries may be considered when a confirmed synchronization journey needs them.
+Then run `make docker-restart`. With an `https://` web origin, cookies are marked `Secure` automatically.
 
-## Open integration decisions
+## Administration and access
 
-Required Graph endpoints and permissions, app registration ownership, consent process, certificate/secret storage, SharePoint site provisioning, calendar source of truth, Teams meeting policy, webhook hosting, Power BI architecture and data refresh cadence remain unconfirmed.
+- **Administrators hold every permission**, including permissions added in future versions, so an administrator can see and do everything.
+- Administration → Users assigns roles and activates or deactivates accounts. Deactivating ends all of that user's sessions immediately. The last active administrator cannot be removed, and administrators cannot remove their own administrator role.
+- People added from the directory or signing in for the first time get `DEFAULT_ROLE`.
+
+## Known limits and next steps
+
+- Only the meeting organizer's token can update or cancel the Outlook event. Organizer hand-over would need `Calendars.ReadWrite.Shared` or an application permission scoped by an Exchange application access policy.
+- Outlook → df-pmp changes (an attendee declines, the organizer edits in Outlook) are not synchronized back yet. That needs Graph change notifications (webhooks) on a public HTTPS endpoint.
+- Recurring meetings are not modelled yet.

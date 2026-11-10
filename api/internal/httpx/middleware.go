@@ -89,6 +89,24 @@ func SecurityHeaders(next http.Handler) http.Handler {
 	})
 }
 
+// SameOrigin rejects state-changing browser requests from other origins. Combined with SameSite=Lax
+// session cookies this prevents cross-site request forgery.
+func SameOrigin(origin string) Middleware {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			switch r.Method {
+			case http.MethodGet, http.MethodHead, http.MethodOptions:
+			default:
+				if o := r.Header.Get("Origin"); o != "" && o != origin {
+					Error(w, http.StatusForbidden, "Cross-origin request rejected.")
+					return
+				}
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
+}
+
 // CORS allows the configured web origin only.
 func CORS(origin string) Middleware {
 	return func(next http.Handler) http.Handler {
@@ -98,6 +116,7 @@ func CORS(origin string) Middleware {
 				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 				w.Header().Set("Access-Control-Expose-Headers", "X-Request-ID")
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
 			}
 			w.Header().Add("Vary", "Origin")
 			if r.Method == http.MethodOptions {

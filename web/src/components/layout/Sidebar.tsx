@@ -7,6 +7,7 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
+  ShieldCheck,
   Plus,
   Users,
   X,
@@ -23,7 +24,8 @@ export const navigation = [
   { label: 'Projects', icon: FolderKanban, to: '/projects' },
   { label: 'Calendar', icon: CalendarDays, to: '/calendar' },
   { label: 'Meetings', icon: Users, to: '/meetings' },
-]
+  { label: 'Administration', icon: ShieldCheck, to: '/admin', permission: 'user:manage' },
+] as { label: string; icon: typeof Gauge; to: string; permission?: string }[]
 
 type SidebarProps = {
   open: boolean
@@ -84,19 +86,21 @@ export function Sidebar({
           />
         )}
         <div className="side-label">Workspace</div>
-        {navigation.map(({ label, icon: Icon, to }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={to === '/'}
-            onClick={onClose}
-            className={navClass}
-            title={collapsed ? label : undefined}
-          >
-            <Icon size={16} strokeWidth={1.75} aria-hidden />
-            <span className="nav-label">{label}</span>
-          </NavLink>
-        ))}
+        {navigation
+          .filter((item) => !item.permission || can(item.permission))
+          .map(({ label, icon: Icon, to }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              onClick={onClose}
+              className={navClass}
+              title={collapsed ? label : undefined}
+            >
+              <Icon size={16} strokeWidth={1.75} aria-hidden />
+              <span className="nav-label">{label}</span>
+            </NavLink>
+          ))}
 
         <div className="side-label project-label">
           <span>Projects</span>
@@ -133,7 +137,7 @@ export function Sidebar({
               {session.roles.map((role) => role.replace('_', ' ')).join(', ') || 'No role assigned'}
             </small>
           </div>
-          <IconButton icon={LogOut} label="Sign out" size={16} onClick={signOut} />
+          <IconButton icon={LogOut} label="Sign out" size={16} onClick={() => void signOut()} />
         </div>
       )}
     </aside>

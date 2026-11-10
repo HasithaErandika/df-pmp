@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dialog-finance/df-pmp/api/internal/auth"
 	"github.com/dialog-finance/df-pmp/api/internal/catalog"
 	"github.com/dialog-finance/df-pmp/api/internal/config"
 	"github.com/dialog-finance/df-pmp/api/internal/database"
@@ -58,15 +57,14 @@ func run(logger *slog.Logger) error {
 		logger.Info("demo data checked", "seeded", seeded)
 	}
 
-	var resolver auth.Resolver = auth.DisabledResolver{}
-	if cfg.AuthMode == config.AuthModePreview {
-		logger.Warn("preview authentication is enabled; do not use outside development", "user", cfg.PreviewUserEmail)
-		resolver = auth.PreviewResolver{Pool: pool, Email: cfg.PreviewUserEmail}
+	deps, err := buildDeps(ctx, logger, cfg, pool, cat)
+	if err != nil {
+		return err
 	}
 
 	srv := &http.Server{
 		Addr:              ":" + cfg.Port,
-		Handler:           server.New(server.Deps{Logger: logger, Pool: pool, Catalog: cat, Resolver: resolver, WebOrigin: cfg.WebOrigin}),
+		Handler:           server.New(deps),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       15 * time.Second,
 		WriteTimeout:      30 * time.Second,
