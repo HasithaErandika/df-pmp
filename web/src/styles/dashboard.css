@@ -1,0 +1,77 @@
+/* Dashboard: KPI tiles and split layout. */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.metric-card {
+  min-height: 112px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: inherit;
+  text-decoration: none;
+}
+.metric-link {
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+}
+.metric-link:hover {
+  border-color: #c5d3ec;
+  box-shadow: 0 4px 14px #1e35511a;
+}
+.metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.metric-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+}
+.metric-value {
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.metric-foot {
+  margin-top: 2px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.dashboard-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.metric-card {
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: var(--accent);
+  content: '';
+}
+.metric-card[data-tone='red']::before {
+  background: var(--brand-red);
+}
+.metric-card[data-tone='gold']::before {
+  background: #d8a22d;
+}
+.metric-card[data-tone='green']::before {
+  background: #7fa21d;
+}

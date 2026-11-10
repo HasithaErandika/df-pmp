@@ -1,0 +1,116 @@
+/* Design tokens. Brand colours are overridden at runtime from api/config/app.json. */
+:root {
+  color-scheme: light;
+  font-family:
+    'IBM Plex Sans',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+
+  --brand-blue: #164396;
+  --brand-blue-strong: #103776;
+  --brand-red: #c40d42;
+  --brand-gold: #fdb934;
+  --brand-green: #b3d335;
+  --brand-turquoise: #1dbecb;
+  --brand-purple: #7b1b67;
+
+  --bg: #f2f4f8;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --line: #e2e6ec;
+  --line-soft: #edf0f4;
+  --line-strong: #cdd3dc;
+  --ink: #131a26;
+  --ink-2: #4d586a;
+  --ink-3: #6f7a8c;
+  --focus: #7ca7ec;
+
+  --accent: var(--brand-blue);
+  --accent-hover: var(--brand-blue-strong);
+  --accent-soft: #e8effc;
+  --danger: #c02f2f;
+  --danger-soft: #fcebea;
+
+  /* Tone pairs: soft background + readable foreground. */
+  --tone-blue-bg: #e8effc;
+  --tone-blue-fg: var(--brand-blue);
+  --tone-red-bg: #fbebf0;
+  --tone-red-fg: var(--brand-red);
+  --tone-gold-bg: #fff4dc;
+  --tone-gold-fg: #8f6206;
+  --tone-green-bg: #eef5dc;
+  --tone-green-fg: #557012;
+  --tone-turquoise-bg: #e1f6f8;
+  --tone-turquoise-fg: #0e7f88;
+  --tone-purple-bg: #f5e8f2;
+  --tone-purple-fg: var(--brand-purple);
+  --tone-grey-bg: #f0f2f5;
+  --tone-grey-fg: #56636c;
+
+  --side-width: 248px;
+  --side-collapsed: 60px;
+  --header-height: 60px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --shadow: 0 1px 2px #1e35510a;
+  --shadow-lg: 0 18px 50px #13203a33;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.tone-blue {
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue-fg);
+}
+.tone-red {
+  background: var(--tone-red-bg);
+  color: var(--tone-red-fg);
+}
+.tone-gold {
+  background: var(--tone-gold-bg);
+  color: var(--tone-gold-fg);
+}
+.tone-green {
+  background: var(--tone-green-bg);
+  color: var(--tone-green-fg);
+}
+.tone-turquoise {
+  background: var(--tone-turquoise-bg);
+  color: var(--tone-turquoise-fg);
+}
+.tone-purple {
+  background: var(--tone-purple-bg);
+  color: var(--tone-purple-fg);
+}
+.tone-grey,
+.tone-neutral {
+  background: var(--tone-grey-bg);
+  color: var(--tone-grey-fg);
+}
+
+.fill-blue {
+  background: var(--brand-blue);
+}
+.fill-red {
+  background: var(--brand-red);
+}
+.fill-gold {
+  background: #d8a22d;
+}
+.fill-green {
+  background: #7fa21d;
+}
+.fill-turquoise {
+  background: var(--brand-turquoise);
+}
+.fill-purple {
+  background: var(--brand-purple);
+}
+.fill-grey {
+  background: #8a96a3;
+}

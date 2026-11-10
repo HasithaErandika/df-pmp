@@ -33,7 +33,6 @@ This list identifies information needed to turn the current baseline into an app
 - Which Graph operations are required and what delegated/application permissions can be approved?
 - Which SharePoint site/library provisioning and selected-site access pattern will be used?
 - How should Outlook/Teams events synchronize when changes are made in either system?
-- How will Power BI access data: governed database/read model, API, or another approved route?
 - What production hosting, ingress, secret store, logging/SIEM, monitoring and recovery standards apply?
 
 ## Decisions to record

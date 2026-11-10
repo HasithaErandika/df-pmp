@@ -1,0 +1,122 @@
+/* Main area, top bar and footer. */
+.main-area {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--side-width);
+  transition: margin 0.15s ease;
+}
+.sidebar-collapsed .main-area {
+  margin-left: var(--side-collapsed);
+}
+
+.topbar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(8px);
+}
+.breadcrumbs {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.breadcrumbs strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.global-search {
+  width: 260px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-3);
+}
+.global-search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.global-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 13px;
+}
+.global-search kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface-2);
+  font: 11px var(--mono);
+}
+.mobile-trigger {
+  display: none;
+}
+
+.page-content {
+  width: min(100%, 1480px);
+  flex: 1;
+  margin: 0 auto;
+  padding: 26px 28px 20px;
+  outline: none;
+}
+.page-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 28px 18px;
+  color: var(--ink-3);
+  font-size: 11.5px;
+}
+.page-footer > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.page-footer i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+.preview-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.preview-status b {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d7a82e;
+}
+
+.scrim {
+  display: none;
+}

@@ -8,6 +8,7 @@ ADRs document consequential technical choices and their status. Proposed choices
 - [0002: Baseline technology and modular architecture](0002-baseline-technology.md)
 - [0003: Dynamic application authorization](0003-dynamic-authorization.md)
 - [0004: Central Microsoft 365 integration boundary](0004-microsoft-integration-boundary.md)
+- [0005: MVP implementation baseline, preview sign-in and no Power BI](0005-implementation-baseline.md)
 
 ## Template
 

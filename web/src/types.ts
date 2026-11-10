@@ -1,0 +1,99 @@
+export type Tone = 'blue' | 'red' | 'gold' | 'green' | 'turquoise' | 'purple' | 'grey' | 'neutral'
+
+export type Workflow = {
+  projectStatuses: string[]
+  workItemStatuses: string[]
+  workItemTypes: string[]
+  priorities: string[]
+  tones: Tone[]
+}
+
+export type AppConfig = {
+  applicationName: string
+  companyName: string
+  productDescription: string
+  logoPath: string
+  timezone: string
+  theme: Record<string, string>
+  statusTones: Record<string, Tone>
+  workflow: Workflow
+}
+
+export type Session = {
+  id: number
+  displayName: string
+  email: string
+  roles: string[]
+  permissions: string[]
+}
+
+export type User = { id: number; displayName: string; email: string }
+
+export type Project = {
+  id: string
+  name: string
+  description: string
+  ownerId: number
+  ownerName: string
+  status: string
+  tone: Tone
+  progress: number
+  startDate: string
+  endDate: string
+  openItems: number
+  updatedAt: string
+}
+export type ProjectInput = Omit<Project, 'id' | 'ownerName' | 'openItems' | 'updatedAt'>
+
+export type WorkItem = {
+  id: string
+  projectId: string
+  projectName: string
+  subject: string
+  type: string
+  status: string
+  priority: string
+  assigneeId: number | null
+  assigneeName: string
+  dueDate: string
+  updatedAt: string
+}
+export type WorkItemInput = Omit<WorkItem, 'id' | 'projectName' | 'assigneeName' | 'updatedAt'>
+
+export type MeetingType = { id: string; name: string; tone: Tone }
+
+export type Meeting = {
+  id: string
+  title: string
+  typeId: string
+  typeName: string
+  tone: Tone
+  projectId: string | null
+  projectName: string
+  startsAt: string
+  endsAt: string
+  location: string
+  agenda: string
+  participantIds: number[]
+}
+export type MeetingInput = Omit<Meeting, 'id' | 'typeName' | 'tone' | 'projectName'>
+
+export type Summary = {
+  activeProjects: number
+  openWorkItems: number
+  assignedToMe: number
+  dueThisWeek: number
+  overdue: number
+  completedThisMonth: number
+  upcomingMeetings: number
+}
+
+export type ActivityEvent = {
+  id: number
+  occurredAt: string
+  actor: string
+  action: string
+  objectType: string
+  objectId: string
+  summary: string
+}

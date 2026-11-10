@@ -1,0 +1,119 @@
+/* Project cards and project detail. */
+.project-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.project-card {
+  position: relative;
+  margin: 0;
+  padding: 16px;
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+}
+.project-card:hover {
+  border-color: #c5d3ec;
+  box-shadow: 0 6px 18px #1e355114;
+}
+.project-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.project-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+}
+.project-card h2 {
+  margin: 4px 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.stretched-link {
+  text-decoration: none;
+}
+.stretched-link::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+.project-owner {
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.project-card-progress {
+  margin-top: 16px;
+}
+.project-card-progress > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.project-card-progress b {
+  color: var(--ink);
+}
+.project-dates {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12.5px;
+}
+.project-dates span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.project-dates small {
+  color: var(--ink-3);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.project-dates .open-items {
+  margin-left: auto;
+  text-align: right;
+}
+
+.detail-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+.detail-facts > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+}
+.detail-facts small {
+  color: var(--ink-3);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+.detail-facts .owner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.fact-progress {
+  align-items: stretch !important;
+}
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
+}

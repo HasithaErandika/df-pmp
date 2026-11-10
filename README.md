@@ -11,20 +11,20 @@ df-pmp will support configurable project, task, meeting, approval and administra
 | Area | Baseline |
 | --- | --- |
 | Web | React + TypeScript, React Router |
-| API | Go REST API |
+| API | Go REST API (pgx, embedded SQL migrations) |
 | Data | PostgreSQL and versioned migrations |
 | Identity | Microsoft Entra ID |
 | Authorization | Database-driven RBAC with scoped access; ABAC where justified |
 | Microsoft 365 | Centralized Microsoft Graph integration; SharePoint/OneDrive for documents |
-| Reporting | Power BI integration |
+| Reporting | In-application dashboards (Power BI not required) |
 | Deployment | Docker and Docker Compose for development; bank-approved production platform |
 | Optional | Redis only when a demonstrated caching or background-job need exists |
 
-Application directories are `web/` and `api/`. The login and workspace views are UI prototypes. Company sign-in, database persistence, configurable workflow execution and Microsoft 365 integration are not implemented yet. Docker Compose provides a local development environment.
+Application directories are `web/` and `api/`. Implemented: PostgreSQL persistence with migrations, database-driven roles and permissions, projects, work items, typed meetings (ITSSC, Operations) with participants, a live dashboard, an audit trail, and a responsive web UI. Not yet implemented: Microsoft Entra ID sign-in (a development-only preview sign-in is used), Microsoft Graph/SharePoint/Outlook/Teams integration, and configurable workflow execution. Power BI is not required.
 
 ## Getting started
 
-Requirements: Docker Compose v2 and Python 3 (for generating a local database password). Node.js 22.12+, pnpm 11.12.0, Go 1.23+, and GNU Make are needed for local frontend/backend development.
+Requirements: Docker Compose v2 and Python 3 (for generating a local database password). Node.js 22.12+, pnpm 11.12.0, Go 1.25+, and GNU Make are needed for local frontend/backend development.
 
 ```sh
 make help
@@ -50,4 +50,4 @@ The first `make` command creates `api/.env` and `web/.env`; the backend config g
 
 ## Status
 
-The technology direction is a baseline, not a substitute for business discovery. Initial meeting categories are stored in API-served calendar data and rendered dynamically. Dashboard content, project data, calendar events, company identity and brand tokens live in editable JSON data/configuration files rather than React components or API handlers. Exact user journeys, approval rules, data retention, organizational scopes, Entra configuration, Microsoft Graph permissions, reporting needs, and production controls require stakeholder validation before implementation.
+Working MVP on top of the documented baseline. Branding, status colours and workflow vocabularies live in `api/config/app.json`; demo records are seeded from `api/internal/database/seed/demo.sql` only when `SEED_DEMO_DATA=true`. Exact user journeys, approval rules, data retention, organizational scopes, Entra configuration, Microsoft Graph permissions and production controls still require stakeholder validation. See [open questions](docs/open-questions.md) and [ADR 0005](docs/adr/0005-implementation-baseline.md).

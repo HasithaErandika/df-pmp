@@ -1,0 +1,114 @@
+/* Form controls. */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.span-2 {
+  grid-column: 1 / -1;
+}
+.field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.field label,
+.field legend {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+.field legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+  padding: 0;
+}
+.required {
+  color: var(--brand-red);
+}
+.field input:not([type='range']):not([type='checkbox']),
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 13.5px;
+}
+.field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.field input[type='range'] {
+  accent-color: var(--accent);
+}
+.field-invalid input,
+.field-invalid select,
+.field-invalid textarea {
+  border-color: var(--danger) !important;
+}
+.field-error {
+  color: var(--danger);
+  font-size: 12px;
+}
+.field-hint {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+.field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+fieldset:disabled input,
+fieldset:disabled select,
+fieldset:disabled textarea {
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.push-left {
+  margin-right: auto;
+}
+.inline-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.inline-select select {
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}

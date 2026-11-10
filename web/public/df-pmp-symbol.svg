@@ -1,7 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="df-pmp">
-  <rect width="48" height="48" rx="11" fill="#164396"/>
-  <rect x="10" y="10" width="12" height="12" rx="2" fill="#fff"/>
-  <rect x="26" y="10" width="12" height="12" rx="2" fill="#C40D42"/>
-  <rect x="10" y="26" width="12" height="12" rx="2" fill="#fff" opacity=".58"/>
-  <rect x="26" y="26" width="12" height="12" rx="2" fill="#fff"/>
+  <defs>
+    <linearGradient id="dfpmp-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d4fae"/>
+      <stop offset="1" stop-color="#112f66"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#dfpmp-bg)"/>
+  <path d="M12 11v26" stroke="#fff" stroke-opacity=".22" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="12" y="13" width="17" height="5.5" rx="2.75" fill="#fff"/>
+  <rect x="17" y="21.25" width="16" height="5.5" rx="2.75" fill="#C40D42"/>
+  <rect x="21" y="29.5" width="9" height="5.5" rx="2.75" fill="#fff" fill-opacity=".6"/>
+  <path d="M36.5 28.25l3.75 3.75-3.75 3.75-3.75-3.75z" fill="#FDB934"/>
 </svg>

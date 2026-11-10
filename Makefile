@@ -1,4 +1,4 @@
-.PHONY: help env-init install dev up down logs ps web api build clean docker-up docker-restart docker-down docker-logs docker-status docker-build docker-clean lint format format-check vulncheck api-format
+.PHONY: help test db env-init install dev up down logs ps web api build clean docker-up docker-restart docker-down docker-logs docker-status docker-build docker-clean lint format format-check vulncheck api-format
 
 COMPOSE ?= docker compose --env-file api/.env
 
@@ -48,6 +48,9 @@ logs: env-init ## Follow service logs
 ps: env-init ## Show service status
 	$(COMPOSE) ps
 
+db: env-init ## Start only PostgreSQL (for running the API locally)
+	$(COMPOSE) up -d db
+
 web: ## Run the web app locally
 	cd web && pnpm dev --host 0.0.0.0
 
@@ -58,24 +61,28 @@ build: ## Build web and API
 	cd web && pnpm build
 	cd api && go build ./cmd/api
 
+test: ## Run API unit tests and the web type check
+	cd api && go test ./...
+	cd web && pnpm exec tsc -b
+
 lint: ## Run frontend ESLint and Go vet
 	cd web && pnpm lint
 	cd api && go vet ./...
 
 format: ## Format frontend sources and Go files
 	cd web && pnpm format
-	cd api && gofmt -w $$(find ./cmd -name '*.go' -type f)
+	cd api && gofmt -w ./cmd ./internal
 
 format-check: ## Check frontend formatting and Go formatting
 	cd web && pnpm format:check
-	@test -z "$$(gofmt -l $$(find api/cmd -name '*.go' -type f))" || (gofmt -l $$(find api/cmd -name '*.go' -type f); exit 1)
+	@test -z "$$(gofmt -l api/cmd api/internal)" || (gofmt -l api/cmd api/internal; exit 1)
 
 vulncheck: ## Scan production web dependencies and Go modules
 	cd web && pnpm audit --prod
 	cd api && govulncheck ./...
 
 api-format: ## Format Go source files
-	cd api && gofmt -w $$(find ./cmd -name '*.go' -type f)
+	cd api && gofmt -w ./cmd ./internal
 
 clean: env-init ## Stop services and remove local database volume
 	$(COMPOSE) down -v

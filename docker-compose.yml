@@ -9,7 +9,8 @@ services:
     environment:
       VITE_API_BASE_URL: http://localhost:${API_PORT:-8080}
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     networks:
       - app
 
@@ -21,10 +22,15 @@ services:
     environment:
       PORT: "8080"
       WEB_ORIGIN: "http://localhost:${WEB_PORT:-5173}"
-      DATA_DIR: /app/data
       CONFIG_DIR: /app/config
+      POSTGRES_HOST: db
+      POSTGRES_DB: ${POSTGRES_DB:-dfpmp}
+      POSTGRES_USER: ${POSTGRES_USER:-dfpmp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in api/.env before starting Docker}
+      AUTH_MODE: ${AUTH_MODE:-preview}
+      PREVIEW_USER_EMAIL: ${PREVIEW_USER_EMAIL:-hasitha@example.com}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
     volumes:
-      - ./api/data:/app/data:ro
       - ./api/config:/app/config:ro
     depends_on:
       db:
@@ -33,7 +39,7 @@ services:
       - app
       - data
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/healthz"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/readyz"]
       interval: 10s
       timeout: 3s
       retries: 5

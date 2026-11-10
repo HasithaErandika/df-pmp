@@ -5,11 +5,12 @@
   "timezone": "Asia/Colombo",
   "logoPath": "/df-pmp-symbol.svg",
   "statusTones": {
+    "Planning": "grey",
+    "To do": "grey",
     "In progress": "blue",
     "At risk": "red",
-    "To do": "grey",
-    "Done": "green",
-    "Planning": "grey"
+    "On hold": "gold",
+    "Done": "green"
   },
   "theme": {
     "primary": "#164396",
@@ -26,5 +27,38 @@
     "peach": "#F26664",
     "silver": "#BACAD3",
     "grey": "#63717A"
+  },
+  "workflow": {
+    "projectStatuses": [
+      "Planning",
+      "In progress",
+      "At risk",
+      "On hold",
+      "Done"
+    ],
+    "workItemStatuses": [
+      "To do",
+      "In progress",
+      "At risk",
+      "Done"
+    ],
+    "workItemTypes": [
+      "Task",
+      "Action",
+      "Milestone"
+    ],
+    "priorities": [
+      "High",
+      "Normal",
+      "Low"
+    ],
+    "tones": [
+      "blue",
+      "red",
+      "gold",
+      "green",
+      "turquoise",
+      "purple"
+    ]
   }
 }

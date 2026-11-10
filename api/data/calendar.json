@@ -1,5 +1,0 @@
-[
-  { "id": "EVT-ITSSC-001", "title": "ITSSC Project Review", "type": "ITSSC", "tone": "blue", "startsAt": "2026-11-12T10:00:00+05:30", "endsAt": "2026-11-12T11:00:00+05:30", "location": "Conference Room 2", "participants": 8, "project": "Digital Onboarding" },
-  { "id": "EVT-OPS-001", "title": "Operations Weekly Sync", "type": "Operations", "tone": "red", "startsAt": "2026-11-14T14:30:00+05:30", "endsAt": "2026-11-14T15:30:00+05:30", "location": "Microsoft Teams", "participants": 12, "project": "Branch Transformation" },
-  { "id": "EVT-ITSSC-002", "title": "Technology Risk Checkpoint", "type": "ITSSC", "tone": "blue", "startsAt": "2026-11-18T09:30:00+05:30", "endsAt": "2026-11-18T10:15:00+05:30", "location": "Conference Room 1", "participants": 6, "project": "Core Banking Upgrade" }
-]

@@ -1,8 +1,12 @@
-# Microsoft 365 and reporting integrations
+# Microsoft 365 integrations
+
+**Status:** Not implemented. Every integration below needs the company Entra tenant, an app registration, approved Graph permissions and (for SharePoint) a provisioned site. Reporting is in-application; Power BI is out of scope (ADR 0005).
+
+Implementation slot: sign-in plugs into the API's `auth.Resolver` interface (`api/internal/auth`), which currently uses a development-only preview resolver. Microsoft calls should live in a new `api/internal/integrations/microsoft` package.
 
 ## Integration boundary
 
-All Microsoft 365 communication should be centralized behind an `integrations/microsoft` area within the planned Go API. Domain modules should call narrow internal interfaces rather than construct Graph requests directly. Centralization supports consistent credentials, telemetry, retry limits, throttling handling, permission review and provider testing.
+All Microsoft 365 communication should be centralized behind an `integrations/microsoft` area within the Go API. Domain modules should call narrow internal interfaces rather than construct Graph requests directly. Centralization supports consistent credentials, telemetry, retry limits, throttling handling, permission review and provider testing.
 
 ## Services and candidate uses
 
@@ -14,7 +18,6 @@ All Microsoft 365 communication should be centralized behind an `integrations/mi
 | OneDrive | User or shared-file references where approved | Clarify ownership, delegated access and lifecycle behavior. |
 | Outlook Calendar | Create/update meeting events and attendees | Define source of truth, conflict handling, cancellations and synchronization. |
 | Teams | Online meeting links/collaboration | Tenant policy and Graph permission support must be verified for the chosen operation. |
-| Power BI | Portfolio and management analytics | Decide embed vs linked reports, dataset refresh, row-level security and export controls. |
 
 Graph should be the primary interface. Use a service-specific API only when an approved requirement is not adequately supported by Graph.
 

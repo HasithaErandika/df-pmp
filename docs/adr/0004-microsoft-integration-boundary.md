@@ -5,7 +5,7 @@
 
 ## Context
 
-The platform may interact with SharePoint, OneDrive, Outlook, Teams, Entra ID and Power BI. Scattering provider calls across domain modules would complicate permissions, failure handling and change management.
+The platform may interact with SharePoint, OneDrive, Outlook, Teams, and Entra ID. Scattering provider calls across domain modules would complicate permissions, failure handling and change management.
 
 ## Decision
 

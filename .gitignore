@@ -7,3 +7,6 @@ api/api
 !web/.env.example
 *.log
 .DS_Store
+
+# Local work logs
+logs/

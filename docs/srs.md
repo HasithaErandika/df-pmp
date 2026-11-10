@@ -4,7 +4,7 @@
 
 ## 1. System context
 
-df-pmp consists of a React/TypeScript web application (`web/`), Go REST API (`api/`), PostgreSQL database, Microsoft Entra ID authentication, a centralized Microsoft 365 integration layer and Power BI reporting integration. Users access the web application through approved enterprise ingress. The API is the policy enforcement and business logic boundary.
+df-pmp consists of a React/TypeScript web application (`web/`), Go REST API (`api/`), PostgreSQL database, Microsoft Entra ID authentication, a centralized Microsoft 365 integration layer and in-application reporting dashboards. Users access the web application through approved enterprise ingress. The API is the policy enforcement and business logic boundary.
 
 ## 2. Functional requirements
 
@@ -43,7 +43,7 @@ df-pmp consists of a React/TypeScript web application (`web/`), Go REST API (`ap
 - **FR-WF-01:** The platform shall be designed to support configurable workflow definitions, versions, steps, transitions and workflow instances.
 - **FR-WF-02:** A workflow configuration change shall not silently rewrite active instances; migration behavior requires explicit policy.
 - **FR-AUD-01:** The system shall record attributable audit events for security-sensitive administration and material business changes.
-- **FR-REPORT-01:** Authorized reporting consumers shall be able to access approved portfolio and operational metrics through the selected reporting approach.
+- **FR-REPORT-01:** Authorized reporting consumers shall be able to access approved portfolio and operational metrics through in-application dashboards; Power BI is not required.
 - **FR-REPORT-02:** Export and reporting access shall be authorized and auditable.
 
 ### Microsoft 365

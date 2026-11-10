@@ -14,11 +14,9 @@ flowchart LR
   MI --> GRAPH[Microsoft Graph]
   GRAPH --> SP[SharePoint / OneDrive]
   GRAPH --> EX[Outlook / Teams / Calendar]
-  API --> BI[Power BI integration]
-  BI --> R[Approved reports]
 ```
 
-Power BI data movement and embedding approach is not yet decided. The diagram represents a logical integration boundary, not a committed deployment topology.
+Reporting is provided by in-application dashboards computed from PostgreSQL; Power BI is out of scope (see ADR 0005). The diagram represents a logical integration boundary, not a committed deployment topology.
 
 ## Responsibilities
 
@@ -30,7 +28,6 @@ Power BI data movement and embedding approach is not yet decided. The diagram re
 | Entra ID | Company identity authentication and identity claims. Detailed business permissions remain in df-pmp. |
 | Microsoft integration | Encapsulated Graph/API clients, credential flows, resource mapping, synchronization and retry behavior. |
 | SharePoint/OneDrive | Company-managed document contents and document lifecycle, subject to approved integration. |
-| Power BI | Approved analytics and dashboards, with access aligned to data governance policy. |
 
 ## Key request flow
 

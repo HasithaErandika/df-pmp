@@ -12,7 +12,7 @@ df-pmp (Digital Finance – Project Management Platform) is a custom enterprise 
 - Let authorized administrators configure roles, permissions, scopes and workflow definitions without a deployment for routine policy changes.
 - Connect company identity and Microsoft 365 capabilities through approved Entra ID and Microsoft APIs.
 - Preserve clear ownership of data: PostgreSQL for df-pmp business records and SharePoint/OneDrive for managed documents.
-- Provide authorized portfolio and operational reporting, including a planned Power BI integration.
+- Provide authorized portfolio and operational reporting through in-application dashboards. Power BI is not required.
 
 ## Out of scope for the initial definition
 
