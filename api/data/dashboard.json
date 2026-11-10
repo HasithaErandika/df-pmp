@@ -1,0 +1,22 @@
+{
+  "greetingName": "Hasitha",
+  "summary": [
+    { "label": "Active projects", "value": "12", "detail": "Across 4 departments", "trend": "+2", "tone": "blue" },
+    { "label": "Open work items", "value": "42", "detail": "8 assigned to you", "trend": "", "tone": "red" },
+    { "label": "Due this week", "value": "08", "detail": "3 high priority", "trend": "", "tone": "gold" },
+    { "label": "Completed this month", "value": "27", "detail": "Compared to last month", "trend": "+18%", "tone": "green" }
+  ],
+  "projects": [
+    { "id": "DF-PROJ-024", "name": "Digital Onboarding", "owner": "Nadeesha Perera", "status": "In progress", "progress": 72, "startDate": "2026-09-01", "endDate": "2026-12-18", "tone": "blue" },
+    { "id": "DF-PROJ-018", "name": "Branch Transformation", "owner": "Kasun Silva", "status": "In progress", "progress": 48, "startDate": "2026-08-15", "endDate": "2027-01-30", "tone": "red" },
+    { "id": "DF-PROJ-011", "name": "Core Banking Upgrade", "owner": "Amal Jayawardena", "status": "Planning", "progress": 31, "startDate": "2026-10-01", "endDate": "2027-03-31", "tone": "gold" }
+  ],
+  "workItems": [
+    { "id": "DF-142", "subject": "Finalize branch operations requirements", "project": "Branch Transformation", "type": "Task", "status": "In progress", "priority": "High", "priorityDirection": "up", "assignee": "Nadeesha Perera", "dueDate": "2026-11-14" },
+    { "id": "DF-138", "subject": "Review vendor security assessment", "project": "Digital Onboarding", "type": "Action", "status": "At risk", "priority": "High", "priorityDirection": "up", "assignee": "Kasun Silva", "dueDate": "2026-11-12" },
+    { "id": "DF-131", "subject": "Prepare UAT test scenarios", "project": "Digital Onboarding", "type": "Task", "status": "In progress", "priority": "Normal", "priorityDirection": "flat", "assignee": "Ishara Fernando", "dueDate": "2026-11-18" },
+    { "id": "DF-126", "subject": "Operations steering committee review", "project": "Core Banking Upgrade", "type": "Milestone", "status": "To do", "priority": "Normal", "priorityDirection": "flat", "assignee": "Amal Jayawardena", "dueDate": "2026-11-20" },
+    { "id": "DF-119", "subject": "Publish updated service procedures", "project": "Branch Transformation", "type": "Task", "status": "Done", "priority": "Low", "priorityDirection": "down", "assignee": "Thilini de Silva", "dueDate": "2026-11-08" },
+    { "id": "DF-113", "subject": "Confirm data migration window", "project": "Core Banking Upgrade", "type": "Action", "status": "In progress", "priority": "High", "priorityDirection": "up", "assignee": "Ruwan Dias", "dueDate": "2026-11-16" }
+  ]
+}

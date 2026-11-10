@@ -1,0 +1,9 @@
+node_modules/
+web/dist/
+api/api
+.env
+.env.*
+!api/.env.example
+!web/.env.example
+*.log
+.DS_Store

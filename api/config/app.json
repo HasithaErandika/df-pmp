@@ -1,0 +1,30 @@
+{
+  "applicationName": "df-pmp",
+  "companyName": "Dialog Finance",
+  "productDescription": "Project Management Platform",
+  "timezone": "Asia/Colombo",
+  "logoPath": "/df-pmp-symbol.svg",
+  "statusTones": {
+    "In progress": "blue",
+    "At risk": "red",
+    "To do": "grey",
+    "Done": "green",
+    "Planning": "grey"
+  },
+  "theme": {
+    "primary": "#164396",
+    "primaryStrong": "#103776",
+    "accent": "#C40D42",
+    "gold": "#FDB934",
+    "orange": "#F7941E",
+    "redOrange": "#F15A22",
+    "purple": "#7B1B67",
+    "magenta": "#EE3E80",
+    "denim": "#6689AB",
+    "turquoise": "#1DBECB",
+    "green": "#B3D335",
+    "peach": "#F26664",
+    "silver": "#BACAD3",
+    "grey": "#63717A"
+  }
+}
