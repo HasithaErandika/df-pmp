@@ -1,0 +1,176 @@
+/* Tracker task dialog: owners input, target trail and progress log. */
+.tag-input {
+  min-height: 38px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.tag-input:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.tag-input.disabled {
+  background: var(--surface-2);
+}
+.field .tag-input input:not([type='range']):not([type='checkbox']) {
+  width: auto;
+  min-width: 140px;
+  min-height: 26px;
+  flex: 1;
+  padding: 0 2px;
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 4px 2px 8px;
+  border-radius: 999px;
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue-fg);
+  font-size: 12.5px;
+}
+.tag-chip button {
+  display: grid;
+  padding: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+}
+.tag-chip button:hover {
+  background: #16439622;
+}
+
+.task-dialog {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(280px, 1fr);
+  gap: 22px;
+}
+.task-progress {
+  min-width: 0;
+  padding-left: 22px;
+  border-left: 1px solid var(--line-soft);
+}
+.task-progress h3 {
+  margin-bottom: 10px;
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.target-trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+.target-trail li {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--ink-3);
+  font-size: 12.5px;
+  text-decoration: line-through;
+}
+.target-trail li.current {
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.target-trail small {
+  font: 400 10.5px var(--mono);
+  text-decoration: none;
+}
+.note-composer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.note-composer textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.note-composer textarea:focus {
+  border-color: var(--accent);
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.update-log {
+  max-height: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.update-log li {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+}
+.update-log p {
+  color: var(--ink);
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.update-log small {
+  color: var(--ink-3);
+  font-size: 11.5px;
+}
+.update-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--tone-grey-bg);
+  color: var(--tone-grey-fg);
+}
+.update-note .update-icon {
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue-fg);
+}
+.update-status .update-icon {
+  background: var(--tone-green-bg);
+  color: var(--tone-green-fg);
+}
+.update-target .update-icon {
+  background: var(--tone-purple-bg);
+  color: var(--tone-purple-fg);
+}
+@media (max-width: 860px) {
+  .task-dialog {
+    grid-template-columns: 1fr;
+  }
+  .task-progress {
+    padding: 18px 0 0;
+    border-top: 1px solid var(--line-soft);
+    border-left: 0;
+  }
+}

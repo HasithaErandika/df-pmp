@@ -9,10 +9,22 @@ type MetricCardProps = {
   icon: ComponentType<{ size?: number }>
   tone: Tone
   to?: string
+  /** Makes the card a toggle button (e.g. a quick filter). */
+  onClick?: () => void
+  active?: boolean
 }
 
-/** KPI tile. When `to` is set the whole card links to the underlying list. */
-export function MetricCard({ label, value, detail, icon: Icon, tone, to }: MetricCardProps) {
+/** KPI tile. With `to` the card links to the underlying list; with `onClick` it is a toggle. */
+export function MetricCard({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  tone,
+  to,
+  onClick,
+  active,
+}: MetricCardProps) {
   const body = (
     <>
       <div className="metric-top">
@@ -27,6 +39,19 @@ export function MetricCard({ label, value, detail, icon: Icon, tone, to }: Metri
       <div className="metric-foot">{detail}</div>
     </>
   )
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={`metric-card metric-link metric-toggle ${active ? 'active' : ''}`}
+        data-tone={tone}
+        aria-pressed={Boolean(active)}
+        onClick={onClick}
+      >
+        {body}
+      </button>
+    )
+  }
   return to ? (
     <Link to={to} className="metric-card metric-link" data-tone={tone}>
       {body}

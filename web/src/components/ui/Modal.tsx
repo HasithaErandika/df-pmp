@@ -8,7 +8,7 @@ type ModalProps = {
   description?: string
   open: boolean
   onClose: () => void
-  size?: 'md' | 'lg'
+  size?: 'md' | 'lg' | 'xl'
   footer?: ReactNode
   children: ReactNode
 }

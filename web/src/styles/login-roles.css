@@ -1,0 +1,97 @@
+/* Development sign-in: role cards (AUTH_MODE=preview only). */
+.role-picker-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.role-picker-head h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.dev-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--tone-gold-bg);
+  color: var(--tone-gold-fg);
+  font: 500 11px var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.role-picker-hint {
+  margin: 4px 0 14px;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.role-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+.role-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  transition:
+    border-color 0.12s,
+    background 0.12s,
+    box-shadow 0.12s;
+}
+.role-card:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 4px 14px #1e35511a;
+}
+.role-card:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+.role-card[aria-busy='true'] {
+  border-color: var(--accent);
+  opacity: 1;
+}
+.role-icon {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+}
+.role-copy {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.role-copy b {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.role-copy small {
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.role-copy em {
+  color: var(--ink-3);
+  font: 400 11.5px var(--mono);
+}
+.role-arrow {
+  color: var(--ink-3);
+  transition: transform 0.12s;
+}
+.role-card:hover:not(:disabled) .role-arrow {
+  color: var(--accent);
+  transform: translateX(2px);
+}

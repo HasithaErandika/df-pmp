@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useSearchParams } from 'react-router-dom'
-import { ArrowRight, Info, ShieldCheck } from 'lucide-react'
+import { Info, ShieldCheck } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
 import { useConfig } from '../../context/ConfigContext'
 import { useSession } from '../../context/SessionContext'
+import { RolePicker } from './RolePicker'
 import { ScheduleField } from './ScheduleField'
 
 function MicrosoftMark() {
@@ -33,6 +34,7 @@ export default function LoginPage() {
   const [notice, setNotice] = useState('')
   const from = (location.state as { from?: string } | null)?.from ?? '/'
   const microsoft = status?.mode === 'entra'
+  const preview = status?.mode === 'preview'
   const signInError = signInErrors[params.get('error') ?? '']
 
   if (session) return <Navigate to={from} replace />
@@ -62,15 +64,26 @@ export default function LoginPage() {
             {config.companyName} {config.productDescription}
           </p>
 
+          {preview && (
+            <>
+              <RolePicker returnTo={from} />
+              <div className="login-divider">
+                <span />
+                or
+                <span />
+              </div>
+            </>
+          )}
+
           <Button
             variant={microsoft ? 'primary' : 'secondary'}
             className="login-microsoft"
             loading={loading && microsoft}
             onClick={() =>
               microsoft
-                ? signIn(from)
+                ? void signIn(from)
                 : setNotice(
-                    'Microsoft sign-in is not configured yet. An administrator must set AUTH_MODE=entra.',
+                    'Microsoft sign-in is not connected yet. An administrator must configure Entra ID and set AUTH_MODE=entra.',
                   )
             }
           >
@@ -92,29 +105,6 @@ export default function LoginPage() {
             <div className="inline-alert alert-error" role="alert">
               {error.message}
             </div>
-          )}
-
-          {status?.mode === 'preview' && (
-            <>
-              <div className="login-divider">
-                <span />
-                or
-                <span />
-              </div>
-
-              <button
-                type="button"
-                className="preview-access"
-                onClick={() => signIn(from)}
-                disabled={loading}
-              >
-                <span>
-                  <b>Open the preview workspace</b>
-                  <small>Explore df-pmp with sample projects, work and meetings.</small>
-                </span>
-                <ArrowRight size={16} aria-hidden />
-              </button>
-            </>
           )}
 
           <p className="login-legal">

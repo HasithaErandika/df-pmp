@@ -19,6 +19,10 @@
 @import './calendar.css';
 @import './agenda.css';
 @import './login.css';
+@import './login-roles.css';
+@import './tracker.css';
+@import './tracker-detail.css';
+@import './releases.css';
 @import './people.css';
 @import './integrations.css';
 @import './admin.css';

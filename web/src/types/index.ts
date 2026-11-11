@@ -6,6 +6,9 @@ export type Workflow = {
   workItemTypes: string[]
   priorities: string[]
   tones: Tone[]
+  trackerStatuses: string[]
+  releaseTypes: string[]
+  releaseStatuses: string[]
 }
 
 export type AppConfig = {
@@ -119,3 +122,4 @@ export type ActivityEvent = {
 }
 
 export * from './integrations'
+export * from './tracker'

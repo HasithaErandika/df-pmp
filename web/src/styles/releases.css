@@ -1,0 +1,124 @@
+/* Release calendar grouped by week. */
+.release-weeks {
+  display: flex;
+  flex-direction: column;
+}
+.release-week header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+.release-week h3 {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.release-week.current header {
+  background: var(--accent-soft);
+}
+.release-week ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.release-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 110px 170px 112px 96px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.release-row:hover {
+  background: #fafbfd;
+}
+.release-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  line-height: 1.1;
+}
+.release-day b {
+  font-size: 16px;
+  font-weight: 600;
+}
+.release-day small {
+  color: var(--ink-3);
+  font: 10.5px var(--mono);
+  text-transform: uppercase;
+}
+.release-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.release-main .link-button {
+  text-align: left;
+}
+.release-main small {
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.type-tag {
+  justify-self: start;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.release-people {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+}
+.release-people small {
+  display: inline-block;
+  width: 30px;
+  color: var(--ink-3);
+  font: 10.5px var(--mono);
+}
+.sanity {
+  font-size: 12px;
+}
+.sanity-yes {
+  color: var(--tone-green-fg);
+}
+.sanity-no,
+.sanity-unknown {
+  color: var(--ink-3);
+}
+.release-more {
+  display: flex;
+  justify-content: center;
+  padding: 14px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+@media (max-width: 960px) {
+  .release-row {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+  }
+  .release-people,
+  .sanity {
+    display: none;
+  }
+  .release-row .status-pill {
+    grid-column: 3;
+  }
+}

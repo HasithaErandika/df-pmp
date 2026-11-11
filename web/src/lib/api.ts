@@ -2,6 +2,7 @@ import type {
   ActivityEvent,
   AdminUser,
   AuthStatus,
+  DevRole,
   DocumentFolder,
   DriveItem,
   IntegrationReport,
@@ -33,6 +34,9 @@ export const api = {
   me: (signal?: AbortSignal) => request<Session>('/api/v1/me', { signal }),
   authStatus: (signal?: AbortSignal) => request<AuthStatus>('/api/v1/auth/status', { signal }),
   logout: () => request<void>('/api/v1/auth/logout', { method: 'POST' }),
+  devRoles: (signal?: AbortSignal) => request<DevRole[]>('/api/v1/auth/dev-roles', { signal }),
+  devLogin: (role: string) =>
+    request<Session>('/api/v1/auth/dev-login', { method: 'POST', body: { role } }),
   people: (q: string, signal?: AbortSignal) =>
     request<PeopleResults>(withQuery('/api/v1/directory/people', { q }), { signal }),
   addPerson: (entraId: string) =>

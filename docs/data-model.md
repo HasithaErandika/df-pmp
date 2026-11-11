@@ -49,6 +49,17 @@ erDiagram
 
 The diagram is conceptual; it does not settle join-table keys, cardinality constraints, tenant partitioning, or physical naming conventions.
 
+## Task tracker (implemented)
+
+Replaces the shared Excel trackers (`FINTECH TRACKER.xlsx`, `Infra Tracker.xlsx`, `Releases.xlsx`), imported once by migrations `0004`–`0006`.
+
+- `tracker_boards`: task boards (Fintech, Infra).
+- `tracker_tasks`: title, responsible people (`owners`, free-text names), BU/PO owner, status, latest remark, and `target_date` (NULL = TBD) with `target_history` holding every earlier target, oldest first. Moving a target appends the old one, so slippage ("Initial → Next → Current TRD" in the spreadsheets) stays measurable.
+- `tracker_task_updates`: progress log. Notes are posted by people; status and target changes are logged automatically.
+- `tracker_releases`: release calendar (date, type, systems, layer, tech owner, BU and Dev/QA SPOCs, sanity test, status).
+
+Statuses and release types are configured in `api/config/app.json` (`trackerStatuses`, `releaseTypes`, `releaseStatuses`); the last tracker status marks a task completed.
+
 ## Important modeling questions
 
 - Is the organizational hierarchy a department-only structure, or are branches, teams, cost centers or legal entities needed?

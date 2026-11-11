@@ -32,7 +32,7 @@ On start the API applies embedded SQL migrations (`api/internal/database/migrati
 
 ### Sign-in
 
-- `AUTH_MODE=preview` (development only): every request acts as `PREVIEW_USER_EMAIL` with that user's database roles.
+- `AUTH_MODE=preview` (development only): the sign-in page lists the roles from the database; clicking one starts a server-side session as the first active user holding that role (a `Demo <Role>` user is created if none exists). There is no identity check, so never use it outside development.
 - `AUTH_MODE=entra`: Microsoft Entra ID sign-in with server-side sessions. See [integrations](integrations.md) for tenant setup, permissions and settings.
 - Any other value rejects all requests.
 
@@ -48,6 +48,10 @@ Administrators (role `administrator`) always hold every permission.
 | `GET/POST /api/v1/projects`, `GET/PUT/DELETE /api/v1/projects/{id}` | `project:view/create/update/delete` |
 | `GET/POST /api/v1/work-items` (`?projectId=`, `?assignee=me`), `GET/PUT/DELETE /api/v1/work-items/{id}` | `work:view/create/update/delete` |
 | `GET /api/v1/meeting-types`, `GET/POST /api/v1/meetings` (`?from=&to=`), `GET/PUT/DELETE /api/v1/meetings/{id}` | `meeting:view/create/update/delete` |
+| `GET /api/v1/tracker/boards`, `GET /api/v1/tracker/boards/{board}/tasks`, `GET /api/v1/tracker/tasks/{id}/updates` | `tracker:view` |
+| `POST /api/v1/tracker/tasks`, `PUT/DELETE /api/v1/tracker/tasks/{id}`, `POST /api/v1/tracker/tasks/{id}/updates` | `tracker:create/update/delete` (notes need `tracker:update`) |
+| `GET/POST /api/v1/tracker/releases`, `PUT/DELETE /api/v1/tracker/releases/{id}` | `tracker:view/create/update/delete` |
+| `GET /api/v1/auth/dev-roles`, `POST /api/v1/auth/dev-login`, `POST /api/v1/auth/logout` | public, `AUTH_MODE=preview` only |
 | `GET /api/v1/activity/{type}/{id}` | `audit:view` |
 | `GET /api/v1/auth/status`, `GET /api/v1/auth/login`, `GET /api/v1/auth/callback`, `POST /api/v1/auth/logout` | public (sign-in flow) |
 | `GET /api/v1/directory/people?q=` / `POST /api/v1/directory/people` | `project:view` / `directory:search` |

@@ -10,7 +10,14 @@
     "In progress": "blue",
     "At risk": "red",
     "On hold": "gold",
-    "Done": "green"
+    "Done": "green",
+    "In funnel": "purple",
+    "Pending update": "turquoise",
+    "Completed": "green",
+    "Planned": "blue",
+    "Released": "green",
+    "Rolled back": "red",
+    "Cancelled": "grey"
   },
   "theme": {
     "primary": "#164396",
@@ -59,6 +66,27 @@
       "green",
       "turquoise",
       "purple"
+    ],
+    "trackerStatuses": [
+      "In funnel",
+      "To do",
+      "In progress",
+      "Pending update",
+      "On hold",
+      "Completed"
+    ],
+    "releaseTypes": [
+      "VA fixes",
+      "Feature",
+      "Improvement",
+      "Issue fix",
+      "Mandate"
+    ],
+    "releaseStatuses": [
+      "Planned",
+      "Released",
+      "Rolled back",
+      "Cancelled"
     ]
   }
 }

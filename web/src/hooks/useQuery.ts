@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useEffectEvent, useState } from 'react'
 
-type QueryState<T> = { data: T | undefined; error: Error | null; loading: boolean }
+type QueryState<T> = { key: string; data: T | undefined; error: Error | null; loading: boolean }
 
 const invalidations = new EventTarget()
 /** Last successful result per key, shown immediately on remount while fresh data loads. */
@@ -17,21 +17,27 @@ export function invalidate(...prefixes: string[]) {
  * Keys must uniquely identify the request, including its parameters.
  */
 export function useQuery<T>(key: string, fetcher: (signal: AbortSignal) => Promise<T>) {
-  const [state, setState] = useState<QueryState<T>>(() => ({
+  const [stored, setState] = useState<QueryState<T>>(() => ({
+    key,
     data: cache.get(key) as T | undefined,
     error: null,
     loading: true,
   }))
+  // When the key changes, never expose the previous key's result for the render before the effect runs.
+  const state: QueryState<T> =
+    stored.key === key
+      ? stored
+      : { key, data: cache.get(key) as T | undefined, error: null, loading: true }
   const [version, setVersion] = useState(0)
   const load = useEffectEvent((signal: AbortSignal) => fetcher(signal))
 
   useEffect(() => {
     const controller = new AbortController()
-    setState({ data: cache.get(key) as T | undefined, error: null, loading: true })
+    setState({ key, data: cache.get(key) as T | undefined, error: null, loading: true })
     load(controller.signal)
       .then((data) => {
         cache.set(key, data)
-        setState({ data, error: null, loading: false })
+        setState({ key, data, error: null, loading: false })
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return
@@ -51,5 +57,6 @@ export function useQuery<T>(key: string, fetcher: (signal: AbortSignal) => Promi
   }, [key])
 
   const reload = useCallback(() => setVersion((value) => value + 1), [])
-  return { ...state, reload }
+  const { data, error, loading } = state
+  return { data, error, loading, reload }
 }

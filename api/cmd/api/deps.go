@@ -26,8 +26,18 @@ func buildDeps(ctx context.Context, logger *slog.Logger, cfg config.Config, pool
 	}
 	switch cfg.AuthMode {
 	case config.AuthModePreview:
-		logger.Warn("preview authentication is enabled; do not use outside development", "user", cfg.PreviewUserEmail)
-		deps.Resolver = auth.PreviewResolver{Pool: pool, Email: cfg.PreviewUserEmail}
+		logger.Warn("development role sign-in is enabled; do not use outside development")
+		var sealer *session.Sealer // only needed to encrypt Microsoft tokens, which preview sessions never hold
+		if len(m.SessionKey) > 0 {
+			var err error
+			if sealer, err = session.NewSealer(m.SessionKey); err != nil {
+				return deps, err
+			}
+		}
+		store := session.Store{Pool: pool, Sealer: sealer, TTL: m.SessionTTL}
+		deps.Dev = &auth.DevLogin{Pool: pool, Sessions: store, Secure: m.CookieSecure}
+		deps.Resolver = deps.Dev
+		go purgeSessions(ctx, logger, store)
 	case config.AuthModeEntra:
 		sealer, err := session.NewSealer(m.SessionKey)
 		if err != nil {

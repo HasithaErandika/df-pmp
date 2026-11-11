@@ -1,7 +1,7 @@
 // Package auth resolves the calling user and enforces database-driven permissions.
 //
-// Identity resolution is pluggable: preview mode maps every request to a configured demo user.
-// Microsoft Entra ID token validation will implement Resolver once tenant settings are approved.
+// Identity resolution is pluggable: Microsoft Entra ID in production, and a role-picker
+// development sign-in (DevLogin) when AUTH_MODE=preview.
 package auth
 
 import (
@@ -11,7 +11,6 @@ import (
 	"slices"
 
 	"github.com/dialog-finance/df-pmp/api/internal/httpx"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/oauth2"
 )
 
@@ -88,17 +87,6 @@ func Require(permission string, handler http.HandlerFunc) http.HandlerFunc {
 		}
 		handler(w, r)
 	}
-}
-
-// PreviewResolver maps all requests to one active user. For local development and demos only.
-type PreviewResolver struct {
-	Pool  *pgxpool.Pool
-	Email string
-}
-
-// Resolve loads the preview user and their current grants on every request so changes apply immediately.
-func (p PreviewResolver) Resolve(r *http.Request) (*Principal, error) {
-	return LoadPrincipal(r.Context(), p.Pool, "lower(u.email) = lower($1)", p.Email)
 }
 
 // DisabledResolver rejects every request; used until Entra ID is configured.

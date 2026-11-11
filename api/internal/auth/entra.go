@@ -184,13 +184,7 @@ func (e *Entra) Resolve(r *http.Request) (*Principal, error) {
 }
 
 func (e *Entra) cookie(name, value string, ttl time.Duration) *http.Cookie {
-	c := &http.Cookie{Name: name, Value: value, Path: "/", HttpOnly: true, Secure: e.Secure, SameSite: http.SameSiteLaxMode}
-	if ttl < 0 {
-		c.MaxAge = -1
-	} else {
-		c.MaxAge = int(ttl.Seconds())
-	}
-	return c
+	return sessionCookie(name, value, ttl, e.Secure)
 }
 
 func (e *Entra) fail(w http.ResponseWriter, r *http.Request, code string, err error) {

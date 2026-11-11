@@ -20,6 +20,10 @@ type Workflow struct {
 	WorkItemTypes    []string `json:"workItemTypes"`
 	Priorities       []string `json:"priorities"`
 	Tones            []string `json:"tones"`
+	// Task tracker vocabularies. The last tracker status marks a task as completed.
+	TrackerStatuses []string `json:"trackerStatuses"`
+	ReleaseTypes    []string `json:"releaseTypes"`
+	ReleaseStatuses []string `json:"releaseStatuses"`
 }
 
 // App is the application configuration document.
@@ -49,7 +53,8 @@ func (s Source) Load() (App, error) {
 	}
 	w := app.Workflow
 	if len(w.ProjectStatuses) == 0 || len(w.WorkItemStatuses) == 0 || len(w.WorkItemTypes) == 0 ||
-		len(w.Priorities) == 0 || len(w.Tones) == 0 {
+		len(w.Priorities) == 0 || len(w.Tones) == 0 || len(w.TrackerStatuses) == 0 ||
+		len(w.ReleaseTypes) == 0 || len(w.ReleaseStatuses) == 0 {
 		return app, fmt.Errorf("app config workflow vocabularies must not be empty")
 	}
 	return app, nil
@@ -73,3 +78,6 @@ func (s Source) Handler(w http.ResponseWriter, r *http.Request) {
 
 // OneOf reports whether value is in allowed.
 func OneOf(value string, allowed []string) bool { return slices.Contains(allowed, value) }
+
+// TrackerDoneStatus is the tracker status that marks a task as completed (the last configured one).
+func (w Workflow) TrackerDoneStatus() string { return w.TrackerStatuses[len(w.TrackerStatuses)-1] }

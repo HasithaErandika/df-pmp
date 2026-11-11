@@ -10,29 +10,27 @@ import (
 
 // Config holds runtime settings. Secrets are read from the environment only.
 type Config struct {
-	Port             string
-	WebOrigin        string
-	ConfigDir        string
-	DatabaseURL      string
-	AuthMode         string
-	PreviewUserEmail string
-	SeedDemoData     bool
-	Microsoft        Microsoft
+	Port         string
+	WebOrigin    string
+	ConfigDir    string
+	DatabaseURL  string
+	AuthMode     string
+	SeedDemoData bool
+	Microsoft    Microsoft
 }
 
-// AuthModePreview resolves every request to a configured demo user. It must not be used in production.
+// AuthModePreview enables the development sign-in where people pick a role. It must not be used in production.
 const AuthModePreview = "preview"
 
 // Load reads the environment and validates required values.
 func Load() (Config, error) {
 	cfg := Config{
-		Port:             env("PORT", "8080"),
-		WebOrigin:        env("WEB_ORIGIN", "http://localhost:5173"),
-		ConfigDir:        env("CONFIG_DIR", "config"),
-		DatabaseURL:      os.Getenv("DATABASE_URL"),
-		AuthMode:         env("AUTH_MODE", AuthModePreview),
-		PreviewUserEmail: env("PREVIEW_USER_EMAIL", "hasitha@example.com"),
-		SeedDemoData:     strings.EqualFold(os.Getenv("SEED_DEMO_DATA"), "true"),
+		Port:         env("PORT", "8080"),
+		WebOrigin:    env("WEB_ORIGIN", "http://localhost:5173"),
+		ConfigDir:    env("CONFIG_DIR", "config"),
+		DatabaseURL:  os.Getenv("DATABASE_URL"),
+		AuthMode:     env("AUTH_MODE", AuthModePreview),
+		SeedDemoData: strings.EqualFold(os.Getenv("SEED_DEMO_DATA"), "true"),
 	}
 	if cfg.DatabaseURL == "" {
 		cfg.DatabaseURL = databaseURLFromParts()

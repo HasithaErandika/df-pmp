@@ -15,6 +15,7 @@ const ProjectDetailPage = lazy(() => import('./features/projects/ProjectDetailPa
 const CalendarPage = lazy(() => import('./features/meetings/CalendarPage'))
 const MeetingsPage = lazy(() => import('./features/meetings/MeetingsPage'))
 const AdminPage = lazy(() => import('./features/admin/AdminPage'))
+const TrackerPage = lazy(() => import('./features/tracker/TrackerPage'))
 
 export default function App() {
   return (
@@ -37,6 +38,14 @@ export default function App() {
                 <Route path="projects/:id" element={<ProjectDetailPage />} />
                 <Route path="calendar" element={<CalendarPage />} />
                 <Route path="meetings" element={<MeetingsPage />} />
+                <Route
+                  path="tracker"
+                  element={
+                    <RequireSession permission="tracker:view">
+                      <TrackerPage />
+                    </RequireSession>
+                  }
+                />
                 <Route
                   path="admin"
                   element={

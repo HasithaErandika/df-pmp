@@ -6,8 +6,6 @@ import { invalidate, useQuery } from '../hooks/useQuery'
 import { api, ApiError, apiBase } from '../lib/api'
 import type { AuthStatus, Session } from '../types'
 
-const PREVIEW_KEY = 'df-pmp-preview'
-
 type SessionState = {
   session: Session | null
   status: AuthStatus | undefined
@@ -16,40 +14,22 @@ type SessionState = {
   can: (permission: string) => boolean
   /** Microsoft 365 feature is available for this signed-in session. */
   hasMicrosoft: (feature: keyof AuthStatus['features']) => boolean
-  signIn: (returnTo?: string) => void
+  /** Entra: redirects to Microsoft. Preview: signs in with the chosen role. */
+  signIn: (returnTo?: string, role?: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
 const SessionContext = createContext<SessionState | null>(null)
 
-const storage = {
-  get: () => {
-    try {
-      return sessionStorage.getItem(PREVIEW_KEY) === 'true'
-    } catch {
-      return false
-    }
-  },
-  set: (enabled: boolean) => {
-    try {
-      if (enabled) sessionStorage.setItem(PREVIEW_KEY, 'true')
-      else sessionStorage.removeItem(PREVIEW_KEY)
-    } catch {
-      // Storage unavailable (private mode): the preview lasts for this page only.
-    }
-  },
-}
-
 /**
- * Tracks the signed-in user. With Microsoft Entra ID the API owns the session (HTTP-only cookie);
- * in preview mode a local flag stands in for sign-in during development.
+ * Tracks the signed-in user. The API owns the session (HTTP-only cookie) in both modes: Microsoft
+ * Entra ID in production, or the development role sign-in when the API runs with AUTH_MODE=preview.
  */
 export function SessionProvider({ children }: { children: ReactNode }) {
   const statusQuery = useQuery('auth-status', api.authStatus)
   const status = statusQuery.data
-  const [preview, setPreview] = useState(storage.get)
   const [attempt, setAttempt] = useState(0)
-  const wantsSession = status?.mode === 'entra' || (status?.mode === 'preview' && preview)
+  const wantsSession = status?.mode === 'entra' || status?.mode === 'preview'
   const key = !status ? 'session:pending' : wantsSession ? `session:${attempt}` : 'session:none'
   const me = useQuery(key, async (signal) => {
     if (!wantsSession) return null
@@ -62,24 +42,24 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   })
 
   const signIn = useCallback(
-    (returnTo = '/') => {
+    async (returnTo = '/', role = '') => {
       if (status?.mode === 'entra') {
         window.location.assign(
           `${apiBase}/api/v1/auth/login?returnTo=${encodeURIComponent(returnTo)}`,
         )
         return
       }
-      storage.set(true)
-      setPreview(true)
+      await api.devLogin(role)
+      invalidate('')
       setAttempt((n) => n + 1)
     },
     [status?.mode],
   )
 
   const signOut = useCallback(async () => {
-    if (status?.mode === 'entra') await api.logout().catch(() => undefined)
-    storage.set(false)
-    setPreview(false)
+    if (status?.mode === 'entra' || status?.mode === 'preview') {
+      await api.logout().catch(() => undefined)
+    }
     setAttempt((n) => n + 1)
     invalidate('session')
   }, [status?.mode])
@@ -120,7 +100,8 @@ export function RequireSession({
   const { session, loading, can } = useSession()
   const location = useLocation()
   if (loading) return <FullPageState title="df-pmp" message="Signing you in…" busy />
-  if (!session) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (!session)
+    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />
   if (permission && !can(permission)) return <Navigate to="/" replace />
   return children
 }

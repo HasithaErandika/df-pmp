@@ -12,6 +12,9 @@
 .modal-lg {
   width: min(720px, calc(100vw - 24px));
 }
+.modal-xl {
+  width: min(1040px, calc(100vw - 24px));
+}
 .modal::backdrop {
   background: #13203a66;
   backdrop-filter: blur(2px);

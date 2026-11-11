@@ -1,0 +1,143 @@
+/* Task tracker: board tabs, health summary, toolbar and task table. */
+.tracker-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.tracker-tabs-note {
+  color: var(--ink-3);
+  font: 12px var(--mono);
+}
+.metric-toggle {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.metric-toggle.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.status-strip {
+  margin: -4px 0 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.status-strip-bar {
+  height: 10px;
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line-soft);
+}
+.status-strip-bar span {
+  min-width: 4px;
+}
+.status-strip-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 10px;
+}
+.status-strip-legend button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+.status-strip-legend button:hover,
+.status-strip-legend button.active {
+  border-color: var(--line);
+  background: var(--surface-2);
+}
+.status-strip-legend button.active {
+  border-color: var(--accent);
+}
+.status-strip-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.status-strip-legend b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.tracker-table td {
+  height: 58px;
+}
+.tracker-table .col-ref {
+  width: 44px;
+  color: var(--ink-3);
+}
+.tracker-table .col-task {
+  min-width: 300px;
+  max-width: 440px;
+  white-space: normal;
+}
+.tracker-table .col-task .link-button {
+  display: block;
+  line-height: 1.35;
+  text-align: left;
+}
+.tracker-table .col-task small {
+  color: var(--ink-3);
+  font: 11.5px var(--mono);
+}
+.tracker-table .col-remark {
+  max-width: 280px;
+  overflow: hidden;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+}
+.target-date {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+.target-date .overdue-tag {
+  margin-left: 0;
+}
+.due-soon {
+  color: var(--tone-gold-fg);
+  font-weight: 500;
+}
+.slip-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--tone-purple-bg);
+  color: var(--tone-purple-fg);
+  font-size: 11px;
+  cursor: help;
+}
+.owner-list {
+  color: var(--ink);
+}
+.tracker-board .board-card-meta {
+  justify-content: space-between;
+  font-size: 12px;
+}

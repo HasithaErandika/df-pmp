@@ -16,6 +16,7 @@ import (
 	ms "github.com/dialog-finance/df-pmp/api/internal/integrations/microsoft"
 	"github.com/dialog-finance/df-pmp/api/internal/meetings"
 	"github.com/dialog-finance/df-pmp/api/internal/projects"
+	"github.com/dialog-finance/df-pmp/api/internal/tracker"
 	"github.com/dialog-finance/df-pmp/api/internal/workitems"
 	"github.com/dialog-finance/df-pmp/api/internal/workspace"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -28,7 +29,8 @@ type Deps struct {
 	Catalog     catalog.Source
 	Config      config.Config
 	Resolver    auth.Resolver
-	Entra       *auth.Entra // nil unless AUTH_MODE=entra
+	Entra       *auth.Entra    // nil unless AUTH_MODE=entra
+	Dev         *auth.DevLogin // nil unless AUTH_MODE=preview
 	Graph       *ms.Client
 	SharePoint  *ms.SharePoint
 	Provisioner auth.Provisioner
@@ -65,11 +67,15 @@ func New(d Deps) http.Handler {
 	workitems.Handler{Repo: workitems.Store{Pool: d.Pool}, Catalog: d.Catalog}.Register(protected)
 	meetings.Handler{Repo: meetings.Store{Pool: d.Pool}, TimeZone: timeZone, Outlook: outlook}.Register(protected)
 	workspace.Handler{Pool: d.Pool, TimeZone: timeZone}.Register(protected)
+	tracker.Handler{Store: tracker.Store{Pool: d.Pool}, Catalog: d.Catalog}.Register(protected)
 	directory.Handler{Pool: d.Pool, Graph: d.Graph, Provisioner: d.Provisioner}.Register(protected)
 	documents.Handler{Pool: d.Pool, SharePoint: d.SharePoint}.Register(protected)
 	adminHandler := admin.Handler{Pool: d.Pool, Integrations: func() any { return integrationReport(d, status) }}
 	if d.Entra != nil {
 		adminHandler.EndSessions = d.Entra.Sessions.DeleteForUser
+	}
+	if d.Dev != nil {
+		adminHandler.EndSessions = d.Dev.Sessions.DeleteForUser
 	}
 	adminHandler.Register(protected)
 
@@ -91,6 +97,11 @@ func New(d Deps) http.Handler {
 		root.HandleFunc("GET /api/v1/auth/login", d.Entra.Login)
 		root.HandleFunc("GET /api/v1/auth/callback", d.Entra.Callback)
 		root.HandleFunc("POST /api/v1/auth/logout", d.Entra.Logout)
+	}
+	if d.Dev != nil {
+		root.HandleFunc("GET /api/v1/auth/dev-roles", d.Dev.Roles)
+		root.HandleFunc("POST /api/v1/auth/dev-login", d.Dev.Login)
+		root.HandleFunc("POST /api/v1/auth/logout", d.Dev.Logout)
 	}
 	root.Handle("/api/v1/", auth.Authenticate(d.Resolver)(protected))
 
